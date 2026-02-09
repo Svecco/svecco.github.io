@@ -4,29 +4,32 @@ import tailwind from "@astrojs/tailwind";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import swup from "@swup/astro";
+import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
-import { defineConfig } from "astro/config";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
+import rehypeMinifyWhitespace from "rehype-minify-whitespace";
+import rehypeRemoveComments from "rehype-remove-comments";
+import rehypeRemoveEmptyAttribute from "rehype-remove-empty-attribute";
 import rehypeSlug from "rehype-slug";
 import remarkDirective from "remark-directive"; /* Handle directives */
 import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-directives";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig } from "./src/config.ts";
+import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
-import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://fuwari.vercel.app/",
+	site: "https://sve.moe/",
 	base: "/",
 	trailingSlash: "always",
 	integrations: [
@@ -35,17 +38,23 @@ export default defineConfig({
 		}),
 		swup({
 			theme: false,
-			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
-			// the default value `transition-` cause transition delay
-			// when the Tailwind class `transition-all` is used
+			animationClass: "transition-swup-",
 			containers: ["main", "#toc"],
-			smoothScrolling: true,
+			smoothScrolling: false, // Disable default scroll plugin to prevent conflicts
 			cache: true,
 			preload: true,
 			accessibility: true,
 			updateHead: true,
 			updateBodyClass: false,
 			globalInstance: true,
+			animationSelector: '[class*="transition-swup-"]',
+			animationDuration: 300, // Further increased for better plugin timing alignment
+			throttleAnimation: true,
+			// Performance optimization: reduce plugin interference during transitions
+			animationTiming: "ease-out",
+			linkSelector: 'a[href^="/"], a[href^="."], a[href^="#"]',
+			preloadLimit: 3,
+			// DOM cleanup optimization - remove unused elements after transitions
 		}),
 		icon({
 			include: {
@@ -56,27 +65,30 @@ export default defineConfig({
 			},
 		}),
 		expressiveCode({
-			themes: [expressiveCodeConfig.theme, expressiveCodeConfig.theme],
+			themes: [expressiveCodeConfig.theme],
 			plugins: [
 				pluginCollapsibleSections(),
 				pluginLineNumbers(),
 				pluginLanguageBadge(),
-				pluginCustomCopyButton()
+				pluginCustomCopyButton(),
 			],
 			defaultProps: {
 				wrap: true,
 				overridesByLang: {
-					'shellsession': {
+					shellsession: {
 						showLineNumbers: false,
 					},
 				},
 			},
+			useThemedScrollbars: false,
+			useThemedSelectionColors: false,
 			styleOverrides: {
 				codeBackground: "var(--codeblock-bg)",
 				borderRadius: "0.75rem",
 				borderColor: "none",
 				codeFontSize: "0.875rem",
-				codeFontFamily: "'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+				codeFontFamily:
+					"'Ubuntu Sans Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 				codeLineHeight: "1.5rem",
 				frames: {
 					editorBackground: "var(--codeblock-bg)",
@@ -87,19 +99,19 @@ export default defineConfig({
 					editorActiveTabIndicatorBottomColor: "var(--primary)",
 					editorActiveTabIndicatorTopColor: "none",
 					editorTabBarBorderBottomColor: "var(--codeblock-topbar-bg)",
-					terminalTitlebarBorderBottomColor: "none"
+					terminalTitlebarBorderBottomColor: "none",
 				},
 				textMarkers: {
 					delHue: 0,
 					insHue: 180,
-					markHue: 250
-				}
+					markHue: 250,
+				},
 			},
 			frames: {
 				showCopyToClipboardButton: false,
-			}
+			},
 		}),
-        svelte(),
+		svelte(),
 		sitemap(),
 	],
 	markdown: {
@@ -113,6 +125,9 @@ export default defineConfig({
 			parseDirectiveNode,
 		],
 		rehypePlugins: [
+			rehypeRemoveComments, // Remove HTML comments
+			rehypeRemoveEmptyAttribute, // Remove empty attributes
+			rehypeMinifyWhitespace, // Minify whitespace and remove empty text nodes
 			rehypeKatex,
 			rehypeSlug,
 			[
@@ -140,7 +155,6 @@ export default defineConfig({
 						tagName: "span",
 						properties: {
 							className: ["anchor-icon"],
-							"data-pagefind-ignore": true,
 						},
 						children: [
 							{
@@ -154,7 +168,37 @@ export default defineConfig({
 		],
 	},
 	vite: {
+		server: {
+			watch: {
+				ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
+			},
+		},
+		assetsInclude: ["**/*.backup", "**/*.bak", "**/*.new"],
+		// Asset optimization configuration
+		define: {
+			__ASSET_PREFIX__: JSON.stringify("/assets"),
+		},
 		build: {
+			// Set modern browser target for smaller bundles
+			target: "es2020",
+			// Enable faster minification
+			minify: "esbuild",
+			// Optimize CSS with advanced options
+			cssMinify: "lightningcss",
+			// Enable sourcemaps for production debugging
+			sourcemap: true,
+			// Enable module pre-bundling for faster builds
+			modulePreload: {
+				polyfill: true,
+			},
+			// Configure advanced build optimizations
+			cssCodeSplit: true,
+			// Enable smaller initial chunks
+			assetsInlineLimit: 4096,
+			// Asset optimization settings
+			assetsDir: "assets",
+			// Custom asset naming strategy
+
 			rollupOptions: {
 				onwarn(warning, warn) {
 					// temporarily suppress this warning

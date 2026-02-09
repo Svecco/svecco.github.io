@@ -1,0 +1,173 @@
+---
+// Swup Plugin Optimizer Component
+// Manages Head and Scripts plugin execution timing to prevent animation conflicts
+---
+
+<script is:inline>
+	import { swupPluginManager } from '@/utils/swup-plugin-manager';
+
+	// Initialize plugin optimization when Swup is ready
+	function initPluginOptimization() {
+		if (typeof window !== 'undefined' && window.swup) {
+			console.log('[Plugin Optimizer] Initializing Swup plugin timing control');
+			
+			// Override Swup's default head update behavior
+			const originalUpdateHead = window.swup.options.updateHead;
+			
+			// Wrap head update to use our scheduler
+			window.swup.options.updateHead = function() {
+				swupPluginManager.scheduleHeadUpdate(() => {
+					// Execute original head update logic
+					if (originalUpdateHead) {
+						originalUpdateHead.call(this);
+					}
+					
+					// Additional head optimization: only update necessary elements
+					optimizeHeadUpdates();
+				});
+			};
+
+			// Handle script execution timing
+			window.swup.hooks.on('content:replace', () => {
+				// Schedule script execution after transition
+				swupPluginManager.scheduleScriptsExecution(() => {
+					executePageScripts();
+				});
+			});
+
+			// Add transition state classes for better UX
+			window.swup.hooks.on('transition:start', () => {
+				document.body.classList.add('swup-plugins-paused');
+			});
+
+			window.swup.hooks.on('transition:end', () => {
+				document.body.classList.remove('swup-plugins-paused');
+			});
+		}
+	}
+
+	/**
+	 * Optimize head updates by filtering unnecessary changes
+	 */
+	function optimizeHeadUpdates() {
+		// Only update essential head elements during transitions
+		const head = document.head;
+
+		// Remove non-essential elements temporarily
+		const nonEssentialElements = head.querySelectorAll(
+			'link[rel="stylesheet"]:not([data-essential]), script:not([data-essential])'
+		);
+		
+		nonEssentialElements.forEach(el => {
+			el.setAttribute('data-deferred-update', 'true');
+		});
+	}
+
+	/**
+	 * Execute page scripts with duplicate prevention
+	 */
+	function executePageScripts() {
+		const newScripts = document.querySelectorAll('script[data-swup]');
+		const existingScripts = new Set(
+			Array.from(document.scripts)
+				.filter(script => script.src)
+				.map(script => script.src)
+		);
+
+		newScripts.forEach(script => {
+			// Only execute new scripts that haven't been loaded
+			if (script.src && !existingScripts.has(script.src)) {
+				executeScriptSafely(script);
+			} else if (!script.src && script.textContent) {
+				// For inline scripts, check if they're initialization scripts
+				if (shouldExecuteInlineScript(script)) {
+					executeScriptSafely(script);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Safely execute a script with error handling
+	 */
+	function executeScriptSafely(scriptElement) {
+		try {
+			if (scriptElement.src) {
+				// External script
+				const newScript = document.createElement('script');
+				newScript.src = scriptElement.src;
+				newScript.async = scriptElement.async;
+				newScript.defer = scriptElement.defer;
+				
+				// Copy other attributes
+				for (const attr of scriptElement.attributes) {
+					if (!['src', 'async', 'defer'].includes(attr.name)) {
+						newScript.setAttribute(attr.name, attr.value);
+					}
+				}
+				
+				document.head.appendChild(newScript);
+			} else {
+				// Inline script
+				const newScript = document.createElement('script');
+				newScript.textContent = scriptElement.textContent;
+				
+				// Copy attributes
+				for (const attr of scriptElement.attributes) {
+					newScript.setAttribute(attr.name, attr.value);
+				}
+				
+				document.head.appendChild(newScript);
+			}
+		} catch (error) {
+			console.warn('Script execution failed:', error);
+		}
+	}
+
+	/**
+	 * Determine if inline script should be executed
+	 */
+	function shouldExecuteInlineScript(scriptElement) {
+		const content = scriptElement.textContent;
+		
+		// Skip common library initialization that might be duplicated
+		const skipPatterns = [
+			/overlayscrollbars/i,
+			/photoswipe/i,
+			/swup/i,
+			/astro/i
+		];
+
+		return !skipPatterns.some(pattern => pattern.test(content));
+	}
+
+	// Initialize when DOM is ready
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initPluginOptimization);
+	} else {
+		initPluginOptimization();
+	}
+
+	// Also initialize when Swup is enabled
+	document.addEventListener('swup:enabled', initPluginOptimization);
+
+	// Cleanup on page unload
+	window.addEventListener('beforeunload', () => {
+		if (typeof swupPluginManager !== 'undefined') {
+			swupPluginManager.destroy();
+		}
+	});
+</script>
+
+<style is:global>
+	/* Visual indicator for plugin pause state */
+	body.swup-plugins-paused {
+		/* Prevent user interaction during plugin-sensitive transitions */
+		pointer-events: none;
+	}
+
+	body.swup-plugins-paused * {
+		/* Ensure all elements respect the pause state */
+		transition-delay: 0s !important;
+	}
+</style>

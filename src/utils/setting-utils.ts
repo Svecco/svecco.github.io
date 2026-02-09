@@ -1,3 +1,8 @@
+/**
+ * Simplified Setting Utilities
+ * Removed complex debounce wrapper for better native performance
+ */
+
 import {
 	AUTO_MODE,
 	DARK_MODE,
@@ -6,6 +11,19 @@ import {
 } from "@constants/constants.ts";
 import { expressiveCodeConfig } from "@/config";
 import type { LIGHT_DARK_MODE } from "@/types/config";
+
+// Simple direct DOM operations without debounce
+function updateClass(
+	element: HTMLElement,
+	className: string,
+	add: boolean,
+): void {
+	if (add) {
+		element.classList.add(className);
+	} else {
+		element.classList.remove(className);
+	}
+}
 
 export function getDefaultHue(): number {
 	const fallback = "250";
@@ -27,28 +45,27 @@ export function setHue(hue: number): void {
 	r.style.setProperty("--hue", String(hue));
 }
 
-export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
+export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
+	const docElement = document.documentElement;
+
 	switch (theme) {
 		case LIGHT_MODE:
-			document.documentElement.classList.remove("dark");
+			updateClass(docElement, "dark", false);
 			break;
 		case DARK_MODE:
-			document.documentElement.classList.add("dark");
+			updateClass(docElement, "dark", true);
 			break;
-		case AUTO_MODE:
-			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-				document.documentElement.classList.add("dark");
-			} else {
-				document.documentElement.classList.remove("dark");
-			}
+		case AUTO_MODE: {
+			const prefersDark = window.matchMedia(
+				"(prefers-color-scheme: dark)",
+			).matches;
+			updateClass(docElement, "dark", prefersDark);
 			break;
+		}
 	}
 
 	// Set the theme for Expressive Code
-	document.documentElement.setAttribute(
-		"data-theme",
-		expressiveCodeConfig.theme,
-	);
+	docElement.setAttribute("data-theme", expressiveCodeConfig.theme);
 }
 
 export function setTheme(theme: LIGHT_DARK_MODE): void {

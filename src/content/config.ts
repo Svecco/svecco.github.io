@@ -1,6 +1,6 @@
 import { defineCollection, z } from "astro:content";
 
-const postsCollection = defineCollection({
+const essaysCollection = defineCollection({
 	schema: z.object({
 		title: z.string(),
 		published: z.date(),
@@ -9,7 +9,8 @@ const postsCollection = defineCollection({
 		description: z.string().optional().default(""),
 		image: z.string().optional().default(""),
 		tags: z.array(z.string()).optional().default([]),
-		category: z.string().optional().nullable().default(""),
+		category: z.string().optional().nullable().default("essays"),
+		location: z.string().optional().default(""),
 		lang: z.string().optional().default(""),
 
 		/* For internal use */
@@ -19,10 +20,15 @@ const postsCollection = defineCollection({
 		nextSlug: z.string().default(""),
 	}),
 });
+
 const specCollection = defineCollection({
 	schema: z.object({}),
 });
-export const collections = {
-	posts: postsCollection,
+
+export const collections: Record<
+	string,
+	ReturnType<typeof defineCollection>
+> = {
+	essays: essaysCollection,
 	spec: specCollection,
-};
+} satisfies Record<string, ReturnType<typeof defineCollection>>;

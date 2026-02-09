@@ -1,9 +1,9 @@
 ---
+import { i18n } from "@i18n/translation.ts";
+import { formatDateToYYYYMMDD } from "@utils/date-utils.ts";
 import { Icon } from "astro-icon/components";
-import { licenseConfig, profileConfig } from "../../config";
+import { licenseConfig, profileConfig } from "@/config.ts";
 import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
-import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 
 interface Props {
 	title: string;

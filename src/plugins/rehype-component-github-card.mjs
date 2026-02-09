@@ -7,7 +7,7 @@ import { h } from "hastscript";
  * @param {Object} properties - The properties of the component.
  * @param {string} properties.repo - The GitHub repository in the format "owner/repo".
  * @param {import('mdast').RootContent[]} children - The children elements of the component.
- * @returns {import('mdast').Parent} The created GitHub Card component.
+ * @returns {Element} The created GitHub Card component.
  */
 export function GithubCardComponent(properties, children) {
 	if (Array.isArray(children) && children.length !== 0)

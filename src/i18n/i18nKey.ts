@@ -2,13 +2,12 @@ enum I18nKey {
 	home = "home",
 	about = "about",
 	archive = "archive",
-	search = "search",
+	progress = "progress",
+	loading = "loading",
 
 	tags = "tags",
 	categories = "categories",
 	recentPosts = "recentPosts",
-
-	comments = "comments",
 
 	untitled = "untitled",
 	uncategorized = "uncategorized",

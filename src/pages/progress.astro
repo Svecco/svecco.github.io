@@ -1,0 +1,13 @@
+---
+import ProgressPanel from "@components/ProgressPanel.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { siteConfig } from "@/config";
+
+let githubUsername = siteConfig.githubUsername || "svecco";
+---
+
+<MainGridLayout title={i18n(I18nKey.progress)}>
+    <ProgressPanel githubUsername={githubUsername} client:only="svelte"></ProgressPanel>
+</MainGridLayout>

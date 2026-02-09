@@ -1,17 +1,16 @@
 import Key from "../i18nKey";
 import type { Translation } from "../translation";
 
-export const en: Translation = {
-	[Key.home]: "Home",
+export default {
+	[Key.home]: "Moments",
 	[Key.about]: "About",
-	[Key.archive]: "Archive",
-	[Key.search]: "Search",
+	[Key.archive]: "Archives",
+	[Key.progress]: "Progress",
+	[Key.loading]: "Loading",
 
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
 	[Key.recentPosts]: "Recent Posts",
-
-	[Key.comments]: "Comments",
 
 	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",
@@ -35,4 +34,4 @@ export const en: Translation = {
 	[Key.author]: "Author",
 	[Key.publishedAt]: "Published at",
 	[Key.license]: "License",
-};
+} as Translation;
