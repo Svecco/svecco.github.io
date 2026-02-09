@@ -1,0 +1,81 @@
+---
+// @ts-nocheck
+const {
+	colors = ["var(--primary)", "#ff6b6b", "#4ecdc4", "#45b7d1"],
+	speed = 1,
+	direction = "diagonal",
+	intensity = 0.7,
+} = Astro.props;
+---
+
+<div id="gradient-flow" class="fixed inset-0 z-[-1] overflow-hidden">
+	<div class="absolute inset-0 opacity-70"></div>
+</div>
+
+<style is:global>
+	#gradient-flow {
+		background: linear-gradient(45deg, 
+			var(--flow-color-1, var(--primary)) 0%, 
+			var(--flow-color-2, #ff6b6b) 25%, 
+			var(--flow-color-3, #4ecdc4) 50%, 
+			var(--flow-color-4, #45b7d1) 75%, 
+			var(--flow-color-1, var(--primary)) 100%);
+		background-size: 400% 400%;
+		animation: gradientFlow 15s ease infinite;
+		will-change: background-position;
+	}
+	
+	@keyframes gradientFlow {
+		0% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
+		100% { background-position: 0% 50%; }
+	}
+	
+	#gradient-flow > div {
+		backdrop-filter: blur(2px);
+	}
+</style>
+
+<script>
+	//@ts-nocheck
+	let time = 0;
+	const gradientElement = document.getElementById('gradient-flow');
+	const overlay = gradientElement.querySelector('div');
+	
+	function updateGradient() {
+		time += 0.01 * speed;
+		
+		// 根据滚动位置调整强度
+		const scrollY = window.scrollY;
+		const maxScroll = document.body.scrollHeight - window.innerHeight;
+		const scrollProgress = Math.min(scrollY / maxScroll, 1);
+		const currentIntensity = intensity * (0.5 + 0.5 * scrollProgress);
+		
+		// 动态调整颜色和透明度
+		const hueShift = Math.sin(time) * 30;
+		const saturation = 70 + Math.sin(time * 0.7) * 20;
+		const lightness = 50 + Math.cos(time * 0.5) * 10;
+		
+		overlay.style.opacity = currentIntensity;
+		overlay.style.backdropFilter = `blur(${1 + scrollProgress * 3}px)`;
+		
+		requestAnimationFrame(updateGradient);
+	}
+	
+	// 根据方向调整动画
+	const directionMap = {
+		horizontal: '90deg',
+		vertical: '0deg', 
+		diagonal: '45deg'
+	};
+	
+	gradientElement.style.setProperty('--direction', directionMap[direction] || '45deg');
+	
+	// 启动动画循环
+	updateGradient();
+	
+	// 响应窗口大小变化
+	window.addEventListener('resize', () => {
+		gradientElement.style.animationDuration = `${15 / speed}s`;
+	});
+</script>

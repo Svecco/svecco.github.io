@@ -1,0 +1,20 @@
+/* Only apply hardware acceleration to actual animated elements */
+.animated-element {
+    will-change: transform, opacity;
+}
+/* Critical fixed-position elements */
+#navbar-wrapper.fixed {
+    will-change: transform;
+}
+/* Actual animation targets */
+.transition-swup-fade {
+    will-change: transform, opacity;
+}
+/* Only use will-change on actual animated elements */
+.will-animate {
+    will-change: transform, opacity;
+}
+/* Remove will-change from static elements */
+.btn-card, .btn-plain, .custom-md a:not(.no-styling), .copy-btn, .expand-animation, .btn-regular, .btn-regular-dark, .card-base, .float-panel, .link, .link-lg, .navbar-hidden, .back-to-top-btn:not(.hide), .gpu-accelerate, .animation-accelerate, .navbar-accelerate, .sidebar-accelerate, .toc-accelerate, .onload-animation, .scrollbar-accelerate, .scroll-container-accelerate, .image-accelerate, .content-accelerate, .code-block-accelerate, .button-accelerate, .interactive-accelerate {
+    will-change: auto !important;
+}

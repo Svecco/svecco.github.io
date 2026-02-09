@@ -13,6 +13,10 @@ export const LinkPresets: { [key in LinkPreset]: NavBarLink } = {
 	},
 	[LinkPreset.Archive]: {
 		name: i18n(I18nKey.archive),
-		url: "/archive/",
+		url: "/",
+	},
+	[LinkPreset.Progress]: {
+		name: i18n(I18nKey.progress),
+		url: "/progress/",
 	},
 };

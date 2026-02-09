@@ -1,0 +1,21 @@
+---
+import { getSortedEssays } from "../utils/content-utils";
+
+const essays = await getSortedEssays();
+console.log("Test page - Number of essays:", essays.length);
+if (essays.length > 0) {
+	console.log("First essay title:", essays[0].data.title);
+}
+---
+
+<div>
+	<h1>Test Essays Page</h1>
+	<p>Number of essays: {essays.length}</p>
+	{essays.length > 0 && (
+		<ul>
+			{essays.map(essay => (
+				<li>{essay.data.title} - {essay.data.published.toString()}</li>
+			))}
+		</ul>
+	)}
+</div>

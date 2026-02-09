@@ -1,0 +1,146 @@
+---
+/**
+ * 懒加载图片组件
+ * 支持Intersection Observer API进行性能优化的图片懒加载
+ */
+
+interface Props {
+	src: string;
+	alt: string;
+	class?: string;
+	width?: number;
+	height?: number;
+	loading?: "lazy" | "eager";
+	placeholder?: string;
+	onLoad?: () => void;
+	onError?: () => void;
+}
+
+const {
+	src,
+	alt,
+	width,
+	height,
+	loading = "lazy",
+	placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNhYWEiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Mb2FkaW5nLi4uPC90ZXh0Pjwvc3ZnPg==",
+} = Astro.props;
+
+const className = Astro.props.class;
+const shouldLazyLoad = loading === "lazy" && typeof window !== "undefined";
+---
+
+<div class:list={[className, "lazy-image-container relative overflow-hidden"]}>
+	{shouldLazyLoad ? (
+		<!-- 懒加载图片 -->
+		<img 
+			data-src={src}
+			alt={alt}
+			width={width}
+			height={height}
+			class="lazy-image w-full h-full object-cover opacity-0 transition-opacity duration-300"
+			loading="lazy"
+			decoding="async"
+			fetchpriority="low"
+			data-placeholder={placeholder}
+		/>
+	) : (
+		<!-- 立即加载图片 -->
+		<img 
+			src={src}
+			alt={alt}
+			width={width}
+			height={height}
+			class="w-full h-full object-cover"
+			loading="eager"
+			decoding="async"
+			fetchpriority="high"
+		/>
+	)}
+	
+	<!-- 加载指示器 -->
+	{shouldLazyLoad && (
+		<div class="lazy-loading-indicator absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+			<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+		</div>
+	)}
+</div>
+
+<style>
+	.lazy-image-container {
+		position: relative;
+	}
+	
+	.lazy-image.loaded {
+		opacity: 1;
+	}
+	
+	.lazy-loading-indicator {
+		transition: opacity 200ms ease-out;
+	}
+	
+	.lazy-image-container.loading-complete .lazy-loading-indicator {
+		opacity: 0;
+		pointer-events: none;
+	}
+</style>
+
+<script is:inline>
+{
+	// 只在客户端执行
+	if (typeof window !== 'undefined' && document.currentScript) {
+		const container = document.currentScript.parentElement;
+		const img = container?.querySelector('.lazy-image');
+		const indicator = container?.querySelector('.lazy-loading-indicator');
+		
+		if (img && indicator) {
+			// 设置占位图
+			img.src = img.dataset.placeholder || '';
+			
+			// 创建Intersection Observer
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						const lazyImage = entry.target;
+						const actualSrc = lazyImage.dataset.src;
+						
+						if (actualSrc) {
+							lazyImage.src = actualSrc;
+							
+							lazyImage.addEventListener('load', () => {
+								lazyImage.classList.add('loaded');
+								container?.classList.add('loading-complete');
+								
+								// 触发自定义加载事件
+								const loadEvent = new CustomEvent('lazyImageLoaded', {
+									detail: { src: actualSrc }
+								});
+								container?.dispatchEvent(loadEvent);
+							});
+							
+							lazyImage.addEventListener('error', () => {
+								// 加载失败时显示默认图片
+								lazyImage.src = '/assets/images/image-unavailable.png';
+								lazyImage.classList.add('loaded');
+								container?.classList.add('loading-complete');
+								
+								const errorEvent = new CustomEvent('lazyImageError', {
+									detail: { src: actualSrc }
+								});
+								container?.dispatchEvent(errorEvent);
+							});
+							
+							// 停止观察此元素
+							observer.unobserve(lazyImage);
+						}
+					}
+				});
+			}, {
+				rootMargin: '50px 0px',
+				threshold: 0.01
+			});
+			
+			observer.observe(img);
+		}
+	}
+}
+</script>

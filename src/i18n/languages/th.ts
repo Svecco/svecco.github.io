@@ -1,21 +1,20 @@
 import Key from "../i18nKey";
 import type { Translation } from "../translation";
 
-export const th: Translation = {
+export default {
 	[Key.home]: "หน้าแรก",
 	[Key.about]: "เกี่ยวกับ",
 	[Key.archive]: "คลัง",
-	[Key.search]: "ค้นหา",
+	[Key.progress]: "ความคืบหน้า",
+	[Key.loading]: "กำลังโหลด",
 
-	[Key.tags]: "ป้ายกำกับ",
+	[Key.tags]: "แท็ก",
 	[Key.categories]: "หมวดหมู่",
 	[Key.recentPosts]: "โพสต์ล่าสุด",
 
-	[Key.comments]: "ความคิดเห็น",
-
-	[Key.untitled]: "ไม่ได้ตั้งชื่อ",
+	[Key.untitled]: "ไม่มีชื่อ",
 	[Key.uncategorized]: "ไม่ได้จัดหมวดหมู่",
-	[Key.noTags]: "ไม่มีป้ายกำกับ",
+	[Key.noTags]: "ไม่มีแท็ก",
 
 	[Key.wordCount]: "คำ",
 	[Key.wordsCount]: "คำ",
@@ -24,15 +23,15 @@ export const th: Translation = {
 	[Key.postCount]: "โพสต์",
 	[Key.postsCount]: "โพสต์",
 
-	[Key.themeColor]: "สีของธีม",
+	[Key.themeColor]: "ธีมสี",
 
 	[Key.lightMode]: "สว่าง",
 	[Key.darkMode]: "มืด",
-	[Key.systemMode]: "ตามระบบ",
+	[Key.systemMode]: "ระบบ",
 
-	[Key.more]: "ดูเพิ่ม",
+	[Key.more]: "เพิ่มเติม",
 
 	[Key.author]: "ผู้เขียน",
 	[Key.publishedAt]: "เผยแพร่เมื่อ",
-	[Key.license]: "สัญญาอนุญาต",
-};
+	[Key.license]: "ใบอนุญาต",
+} as Translation;

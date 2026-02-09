@@ -3,6 +3,7 @@ import { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants.ts";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
+import { debounce } from "@utils/performance-utils.ts";
 import {
 	applyThemeToDocument,
 	getStoredTheme,
@@ -13,27 +14,38 @@ import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 
 const seq: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
+let themeChangeListener: ((e: MediaQueryListEvent) => void) | null = null;
+
+const debouncedApplyTheme = debounce((newMode: LIGHT_DARK_MODE) => {
+	applyThemeToDocument(newMode);
+}, 600); // 600ms delay to ensure animation completion
 
 onMount(() => {
 	mode = getStoredTheme();
 	const darkModePreference = window.matchMedia("(prefers-color-scheme: dark)");
-	const changeThemeWhenSchemeChanged: Parameters<
-		typeof darkModePreference.addEventListener<"change">
-	>[1] = (_e) => {
-		applyThemeToDocument(mode);
-	};
-	darkModePreference.addEventListener("change", changeThemeWhenSchemeChanged);
+
+	themeChangeListener = debounce((_e: MediaQueryListEvent) => {
+		if (mode === AUTO_MODE) {
+			debouncedApplyTheme(mode);
+		}
+	}, 150);
+
+	darkModePreference.addEventListener("change", themeChangeListener);
+
+	debouncedApplyTheme(mode);
+
 	return () => {
-		darkModePreference.removeEventListener(
-			"change",
-			changeThemeWhenSchemeChanged,
-		);
+		if (themeChangeListener) {
+			darkModePreference.removeEventListener("change", themeChangeListener);
+		}
 	};
 });
 
 function switchScheme(newMode: LIGHT_DARK_MODE) {
 	mode = newMode;
 	setTheme(newMode);
+	debouncedApplyTheme.cancel();
+	applyThemeToDocument(newMode);
 }
 
 function toggleScheme() {
@@ -48,16 +60,15 @@ function toggleScheme() {
 
 function showPanel() {
 	const panel = document.querySelector("#light-dark-panel");
-	panel.classList.remove("float-panel-closed");
+	panel?.classList.remove("float-panel-closed");
 }
 
 function hidePanel() {
 	const panel = document.querySelector("#light-dark-panel");
-	panel.classList.add("float-panel-closed");
+	panel?.classList.add("float-panel-closed");
 }
 </script>
 
-<!-- z-50 make the panel higher than other float panels -->
 <div class="relative z-50" role="menu" tabindex="-1" onmouseleave={hidePanel}>
     <button aria-label="Light/Dark Mode" role="menuitem" class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="scheme-switch" onclick={toggleScheme} onmouseenter={showPanel}>
         <div class="absolute" class:opacity-0={mode !== LIGHT_MODE}>

@@ -1,0 +1,118 @@
+---
+// @ts-nocheck
+interface Props {
+	/** 背景图片路径 */
+	backgroundImage: string;
+	/** Effect type: 'linear' (homepage linear transition) | 'fixed' (fixed state) */
+	effectType: "linear" | "fixed";
+	/** 自定义类名 */
+	class?: string;
+}
+
+const {
+	backgroundImage,
+	effectType = "linear",
+	class: customClass = "",
+} = Astro.props;
+---
+
+<div 
+  class={`modular-background ${customClass}`}
+  data-effect-type={effectType}
+  style={`background-image: url('${backgroundImage}');`}
+>
+</div>
+
+// 预加载背景图片以提高性能
+<link rel="preload" href={backgroundImage} as="image" fetchpriority="high" />
+
+<style is:global>
+.modular-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Linear transition effect (homepage) */
+.modular-background[data-effect-type="linear"] {
+  transform: scale(var(--bg-scale, 1));
+  filter: brightness(var(--bg-brightness, 100%)) blur(var(--bg-blur, 0px));
+}
+
+/* Fixed state effect (special pages) */
+.modular-background[data-effect-type="fixed"] {
+  transform: scale(1.2);
+  filter: brightness(90%) blur(3px);
+}
+</style>
+
+<script is:inline>
+class ModularBackground {
+  constructor(container) {
+    this.container = container;
+    this.effectType = container.dataset.effectType;
+    this.scrollTop = 0;
+    this.rafId = null;
+    
+    this.init();
+  }
+  
+  init() {
+    if (this.effectType === 'linear') {
+      this.setupLinearEffect();
+    }
+    // fixed type doesn't need additional initialization
+  }
+  
+  setupLinearEffect() {
+    const handleScroll = () => {
+      this.scrollTop = window.scrollY;
+      
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+      }
+      
+      this.rafId = requestAnimationFrame(() => {
+        this.updateLinearEffect();
+        this.rafId = null;
+      });
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    
+    // Initial update
+    this.updateLinearEffect();
+  }
+  
+  updateLinearEffect() {
+    const scrollPercent = Math.min(this.scrollTop / (window.innerHeight * 0.8), 1);
+    const easedPercent = 1 - Math.pow(1 - scrollPercent, 2);
+    
+    const scaleValue = 1 + (easedPercent * 0.15);
+    const brightnessValue = 100 - (easedPercent * 5);
+    const blurValue = easedPercent * 2;
+    
+    document.documentElement.style.setProperty('--bg-scale', scaleValue);
+    document.documentElement.style.setProperty('--bg-brightness', `${brightnessValue}%`);
+    document.documentElement.style.setProperty('--bg-blur', `${blurValue}px`);
+  }
+}
+
+// Initialize all modular background components
+document.addEventListener('DOMContentLoaded', () => {
+  const backgroundElements = document.querySelectorAll('.modular-background');
+  backgroundElements.forEach(el => {
+    new ModularBackground(el);
+  });
+});
+</script>

@@ -1,28 +1,45 @@
 .scrollbar-base.os-scrollbar {
-    @apply transition-all;
+    transition: width 0.2s ease, height 0.2s ease;
     pointer-events: unset;
-
+    position: relative;
+    /* Enable pseudo-element positioning */
     &.os-scrollbar-horizontal {
         @apply py-1 px-2 h-4;
-        .os-scrollbar-track .os-scrollbar-handle {
-            @apply rounded-full h-1;
+        /* Use pseudo-element instead of nested DOM for scrollbar handle */
+        &::after {
+            content: "";
+            @apply rounded-full h-1 bg-[var(--os-handle-bg)] absolute top-1/2 left-0 transform -translate-y-1/2;
+            width: 2rem;
+            /* Initial handle width */
+            transition: height 0.2s ease, width 0.2s ease;
         }
-        &:hover .os-scrollbar-track .os-scrollbar-handle {
+        &:hover::after {
             @apply h-2;
         }
+        /* Hide original nested structure if it exists */
+        .os-scrollbar-track .os-scrollbar-handle {
+            display: none;
+        }
     }
-
     &.os-scrollbar-vertical {
         @apply px-1 py-1 w-4;
-        .os-scrollbar-track .os-scrollbar-handle {
-            @apply rounded-full w-1;
+        /* Use pseudo-element instead of nested DOM for scrollbar handle */
+        &::after {
+            content: "";
+            @apply rounded-full w-1 bg-[var(--os-handle-bg)] absolute left-1/2 top-0 transform -translate-x-1/2;
+            height: 2rem;
+            /* Initial handle height */
+            transition: width 0.2s ease, height 0.2s ease;
         }
-        &:hover .os-scrollbar-track .os-scrollbar-handle {
+        &:hover::after {
             @apply w-2;
+        }
+        /* Hide original nested structure if it exists */
+        .os-scrollbar-track .os-scrollbar-handle {
+            display: none;
         }
     }
 }
-
 .os-scrollbar {
     &.scrollbar-auto {
         --os-handle-bg: var(--scrollbar-bg);

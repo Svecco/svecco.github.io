@@ -1,0 +1,62 @@
+.btn-card, .btn-plain, .custom-md a:not(.no-styling), .copy-btn, .expand-animation, .btn-regular, .btn-regular-dark {
+  will-change: auto !important;
+}
+.animated-element {
+  will-change: transform, opacity !important;
+}
+.btn-card:hover, .btn-plain:hover, .custom-md a:not(.no-styling):hover {
+  will-change: transform !important;
+}
+.copy-btn:hover {
+  will-change: opacity, transform !important;
+}
+.katex-display-container {
+  will-change: scroll-position !important;
+}
+.animation-complete {
+  will-change: auto !important;
+}
+@media (max-width: 768px) or (prefers-reduced-motion: reduce) {
+  .btn-card, .btn-plain, .custom-md a:not(.no-styling), .copy-btn, .btn-regular, .btn-regular-dark {
+    will-change: auto !important;
+    transform: none !important;
+  }
+}
+.card-base, .float-panel, .link, .link-lg {
+  will-change: auto !important;
+}
+.navbar-hidden {
+  will-change: transform !important;
+}
+.back-to-top-btn:not(.hide) {
+  will-change: opacity, transform !important;
+}
+/* Removed excessive will-change overrides */
+/* Enable necessary hardware acceleration for specific scenarios */
+#navbar-wrapper.navbar-hidden {
+  will-change: transform !important;
+}
+#toc-wrapper:not(.toc-hide):not(.toc-not-ready) {
+  will-change: transform, opacity !important;
+}
+.custom-md a:not(.no-styling) {
+  will-change: auto !important;
+}
+.custom-md a:not(.no-styling):hover {
+  will-change: color, text-decoration-color !important;
+}
+.custom-md .copy-btn {
+  will-change: auto !important;
+}
+.custom-md .copy-btn:hover {
+  will-change: opacity, transform !important;
+}
+.card-base, .float-panel, .link, .link-lg {
+  will-change: auto !important;
+}
+.navbar-hidden {
+  will-change: transform !important;
+}
+.back-to-top-btn:not(.hide) {
+  will-change: opacity, transform !important;
+}

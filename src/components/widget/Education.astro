@@ -1,0 +1,44 @@
+---
+import { educationConfig } from "@/config";
+import ButtonWithLogo from "../control/ButtonWithLogo.astro";
+import WidgetLayout from "./WidgetLayout.astro";
+
+const { educationList } = educationConfig;
+
+const COLLAPSED_HEIGHT = "7.5rem";
+// Always show all education items, never collapse
+const isCollapsed = false;
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+---
+
+<WidgetLayout name="Education" id="education" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
+                class={className} style={style}
+>
+    {educationList.map((edu) =>
+        <ButtonWithLogo
+            url={edu.url}
+            logo={edu.logo}
+            label={`Visit ${edu.institution}`}
+            invertOnDark={true}
+            admitted={edu.admitted !== undefined ? edu.admitted : true}
+            eager={false}
+        >
+            <div class="flex flex-col w-full">
+                <div class="text-neutral-700 dark:text-neutral-300 truncate">{edu.institution}</div>
+                <div class="flex mt-1 w-full">
+                    <div class="flex-1 min-w-0">
+                        {edu.duration && (
+                            <div class="text-gray-500 text-sm truncate">{edu.duration}</div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </ButtonWithLogo>
+    )}
+</WidgetLayout>

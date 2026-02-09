@@ -1,0 +1,61 @@
+---
+// Client-side integration for Swup scroll optimization
+// This script initializes the scroll optimizer after Swup is ready
+---
+
+<script is:inline>
+	import { swupScrollOptimizer } from "@/utils/swup-scroll-optimizer";
+
+	// Initialize scroll optimizer when Swup is ready
+	function initScrollOptimization() {
+		// Ensure Swup instance exists
+		if (typeof window !== "undefined" && window.swup) {
+			console.log("[Scroll Optimizer] Initializing optimized scroll handling");
+			
+			// The optimizer is already initialized via module import
+			// Just ensure it's properly connected to Swup events
+			
+			// Add additional event listeners for better integration
+			window.swup.hooks.on("content:replace", () => {
+				// Content is about to be replaced - prepare for scroll optimization
+				document.body.classList.add("swup-transitioning");
+			});
+			
+			window.swup.hooks.on("content:scroll", () => {
+				// Prevent default scroll behavior
+				return false;
+			});
+			
+			window.swup.hooks.on("page:view", () => {
+				// Page view complete - remove transition class
+				document.body.classList.remove("swup-transitioning");
+				
+				// Handle hash navigation
+				if (window.location.hash) {
+					// Use our optimized scroll
+					swupScrollOptimizer.scrollToElement(window.location.hash, "smooth");
+				} else {
+					// Scroll to top for new pages
+					swupScrollOptimizer.scrollToTop("smooth");
+				}
+			});
+		}
+	}
+
+	// Initialize when DOM is ready
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initScrollOptimization);
+	} else {
+		initScrollOptimization();
+	}
+
+	// Also initialize when Swup is ready (in case it loads after DOM)
+	document.addEventListener("swup:enabled", initScrollOptimization);
+
+	// Cleanup on page unload
+	window.addEventListener("beforeunload", () => {
+		if (typeof swupScrollOptimizer !== "undefined") {
+			swupScrollOptimizer.destroy();
+		}
+	});
+</script>

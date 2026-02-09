@@ -21,6 +21,7 @@ interface Post {
 		tags: string[];
 		category?: string;
 		published: Date;
+		location?: string;
 	};
 }
 
@@ -103,7 +104,7 @@ onMount(async () => {
                 </div>
             </div>
 
-            {#each group.posts as post}
+            {#each group.posts as post, index}
                 <a
                         href={getPostUrlBySlug(post.slug)}
                         aria-label={post.data.title}
@@ -111,12 +112,12 @@ onMount(async () => {
                 >
                     <div class="flex flex-row justify-start items-center h-full">
                         <!-- date -->
-                        <div class="w-[15%] md:w-[10%] transition text-sm text-right text-50">
+                        <div class="w-[15%] md:w-[10%] transition text-sm text-right text-50 flex-shrink-0">
                             {formatDate(post.data.published)}
                         </div>
 
-                        <!-- dot and line -->
-                        <div class="w-[15%] md:w-[10%] relative dash-line h-full flex items-center">
+                        <!-- dot -->
+                        <div class="w-[15%] md:w-[10%] relative h-full flex items-center flex-shrink-0">
                             <div
                                     class="transition-all mx-auto w-1 h-1 rounded group-hover:h-5
                        bg-[oklch(0.5_0.05_var(--hue))] group-hover:bg-[var(--primary)]
@@ -127,21 +128,24 @@ onMount(async () => {
                             ></div>
                         </div>
 
-                        <!-- post title -->
-                        <div
-                                class="w-[70%] md:max-w-[65%] md:w-[65%] text-left font-bold
-                     group-hover:translate-x-1 transition-all group-hover:text-[var(--primary)]
-                     text-75 pr-8 whitespace-nowrap overflow-ellipsis overflow-hidden"
-                        >
-                            {post.data.title}
-                        </div>
+                        <!-- content area with flexible layout -->
+                        <div class="flex-1 min-w-0 flex items-center">
+                            <!-- post title -->
+                            <div
+                                    class="flex-1 min-w-0 text-left font-bold
+                         group-hover:translate-x-1 transition-all group-hover:text-[var(--primary)]
+                         text-75 pr-4 whitespace-nowrap overflow-ellipsis overflow-hidden"
+                            >
+                                {post.data.title}
+                            </div>
 
-                        <!-- tag list -->
-                        <div
-                                class="hidden md:block md:w-[15%] text-left text-sm transition
-                     whitespace-nowrap overflow-ellipsis overflow-hidden text-30"
-                        >
-                            {formatTag(post.data.tags)}
+                            <!-- location -->
+                            <div
+                                    class="hidden md:block ml-4 text-right text-sm transition
+                         whitespace-nowrap text-30 flex-shrink-0"
+                            >
+                                {post.data.location}
+                            </div>
                         </div>
                     </div>
                 </a>

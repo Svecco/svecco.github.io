@@ -24,6 +24,7 @@ export type SiteConfig = {
 		enable: boolean;
 		src: string;
 		position?: "top" | "center" | "bottom";
+		fullPage?: boolean;
 		credit: {
 			enable: boolean;
 			text: string;
@@ -36,6 +37,9 @@ export type SiteConfig = {
 	};
 
 	favicon: Favicon[];
+
+	// GitHub username for progress page
+	githubUsername?: string;
 };
 
 export type Favicon = {
@@ -48,6 +52,7 @@ export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
 	About = 2,
+	Progress = 3,
 }
 
 export type NavBarLink = {
@@ -71,6 +76,30 @@ export type ProfileConfig = {
 	}[];
 };
 
+export type Organization = {
+	name: string;
+	url: string;
+	logo?: string;
+	description?: string;
+	admitted?: boolean; // Add admitted property
+};
+
+export type OrganizationsConfig = {
+	organizations: Organization[];
+};
+
+export type Education = {
+	institution: string;
+	url: string;
+	logo: string;
+	duration: string;
+	admitted?: boolean;
+};
+
+export type EducationConfig = {
+	educationList: Education[];
+};
+
 export type LicenseConfig = {
 	enable: boolean;
 	name: string;
@@ -91,6 +120,7 @@ export type BlogPostData = {
 	draft?: boolean;
 	image?: string;
 	category?: string;
+	location?: string;
 	prevTitle?: string;
 	prevSlug?: string;
 	nextTitle?: string;
