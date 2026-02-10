@@ -1,8 +1,4 @@
 ---
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import SwupPluginOptimizer from "@components/SwupPluginOptimizer.astro";
 // import ModularBackground from "@components/background/ModularBackground.astro"; // Temporarily commented out, not in use
@@ -122,6 +118,8 @@ const bannerOffset =
 
 		<!-- Set the theme before the page is rendered to avoid a flash -->
 		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue, fullPageBackground, banner}}>
+			// Make fullPageBackground available globally
+			window.FULL_PAGE_BACKGROUND = fullPageBackground;
 			// Load the theme from local storage
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			switch (theme) {
@@ -148,26 +146,6 @@ const bannerOffset =
 			offset = offset - offset % 4;
 			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
 
-			// Initialize modular background system
-			if (fullPageBackground) {
-				// Set initial CSS variable values
-				const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
-				
-				if (isHomePage) {
-					// Home page: Set initial linear effect values
-					document.documentElement.style.setProperty('--bg-scale', '1');
-					document.documentElement.style.setProperty('--bg-brightness', '100%');
-					document.documentElement.style.setProperty('--bg-blur', '0px');
-				} else {
-					// Special pages: Set fixed state values
-					document.documentElement.style.setProperty('--bg-scale', '1.15');
-					document.documentElement.style.setProperty('--bg-brightness', '65%');
-					document.documentElement.style.setProperty('--bg-blur', '2px');
-					
-					// Add lock marker
-					document.documentElement.setAttribute('data-bg-locked', 'true');
-				}
-			}
 		</script>
 		<style define:vars={{
 			configHue,
@@ -465,39 +443,44 @@ function showBanner() {
 	banner.classList.remove('opacity-0', 'scale-105');
 }
 
+function updateBackgroundState(isFullPage: boolean) {
+	if (isFullPage) {
+		const isSpecialPage = window.location.pathname !== '/' && window.location.pathname !== '/index.html';
+		
+		if (isSpecialPage) {
+			// Special pages: background scaling, darkening, blurring
+			document.documentElement.style.setProperty('--bg-scale', '1.15');
+			document.documentElement.style.setProperty('--bg-brightness', '65%');
+			document.documentElement.style.setProperty('--bg-blur', '2px');
+		} else {
+			// Home page: restore normal state
+			document.documentElement.style.setProperty('--bg-scale', '1');
+			document.documentElement.style.setProperty('--bg-brightness', '100%');
+			document.documentElement.style.setProperty('--bg-blur', '0px');
+		}
+	}
+}
+
 function init() {
-	// disableAnimation()()		// TODO
 	loadTheme();
 	loadHue();
 	initCustomScrollbar();
 	showBanner();
 }
 
-/* Load settings when entering the site */
 init();
 
 const setup = () => {
-	// TODO: temp solution to change the height of the banner
-/*
-	window.swup.hooks.on('animation:out:start', () => {
-		const path = window.location.pathname
-		const body = document.querySelector('body')
-		if (path[path.length - 1] === '/' && !body.classList.contains('is-home')) {
-			body.classList.add('is-home')
-		} else if (path[path.length - 1] !== '/' && body.classList.contains('is-home')) {
-			body.classList.remove('is-home')
-		}
-	})
-*/
 	window.swup.hooks.on('link:click', () => {
-		// Remove the delay for the first time page load
 		document.documentElement.style.setProperty('--content-delay', '0ms')
-
-		// Defer all layout operations until after animation completes
-		// Prevent any synchronous tasks during transition
 	})
-	
-	// Handle navbar state after transition completes
+
+	window.swup.hooks.on('animation:out:start', () => {
+		setTimeout(() => {
+			updateBackgroundState((window as any).FULL_PAGE_BACKGROUND);
+		}, 0);
+	})
+
 	window.swup.hooks.on('animation:in:done', () => {
 		// Only update navbar state after animation is completely finished
 		if (!bannerEnabled) return;
@@ -648,7 +631,6 @@ function setupImageClickListeners() {
                 });
         });
 }
-
 function initPhotoSwipe() {
 	setupImageClickListeners();
 	window.swup?.hooks?.on('page:view', setupImageClickListeners);
@@ -659,7 +641,22 @@ function initPhotoSwipe() {
 }
 
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', initPhotoSwipe);
+	document.addEventListener('DOMContentLoaded', () => {
+		// Initial background state setup
+		if ((window as any).FULL_PAGE_BACKGROUND) {
+			const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+				
+			if (isHomePage) {
+				document.documentElement.style.setProperty('--bg-scale', '1');
+				document.documentElement.style.setProperty('--bg-brightness', '100%');
+				document.documentElement.style.setProperty('--bg-blur', '0px');
+			} else {
+				document.documentElement.style.setProperty('--bg-scale', '1.15');
+				document.documentElement.style.setProperty('--bg-brightness', '65%');
+				document.documentElement.style.setProperty('--bg-blur', '2px');
+			}
+		}
+	});
 } else {
 	initPhotoSwipe();
 }

@@ -42,9 +42,19 @@ const loadingStrategy = shouldLazyLoad ? "lazy" : "eager";
 // biome-ignore lint/suspicious/noImplicitAnyLet: <check later>
 let img;
 if (isLocal) {
-	const files = import.meta.glob<ImageMetadata>("../../**", {
-		import: "default",
-	});
+	const files = import.meta.glob<ImageMetadata>(
+		[
+			"../../assets/**/*.{png,jpg,jpeg,webp,gif,svg}",
+			"../content/**/*.{png,jpg,jpeg,webp,gif,svg}",
+			"../../../public/assets/**/*.{png,jpg,jpeg,webp,gif,svg}",
+			"../../../public/favicon/**/*.{png,jpg,jpeg,webp,gif,svg}",
+			"../../styles/**/*.{css,styl,scss,yaml}",
+		],
+		{
+			import: "default",
+			eager: false,
+		},
+	);
 	let normalizedPath = path
 		.normalize(path.join("../../", basePath, src))
 		.replace(/\\/g, "/");

@@ -34,11 +34,11 @@ draft       : {BOOLEAN}
 | `image`       | The cover image path of the post.<br/>1. Start with `http://` or `https://`: Use web image<br/>2. Start with `/`: For image in `public` dir<br/>3. With none of the prefixes: Relative to the markdown file |
 | `tags`        | The tags of the post.                                                                                                                                                                                       |
 | `category`    | The category of the post.                                                                                                                                                                                   |
-| `draft`       | If this post is still a draft, which won't be displayed.                                                                                                                                                    |
 | `location`    | The location where the essay was written.                                                                                                                                                                   |
+| `draft`       | If this post is still a draft, which won't be displayed.                                                                                                                                                    |
 
 # 2. Post File Placement
-Your post files should be placed in `src/content/posts/` directory. You can also create subdirectories to better organize your posts and assets.
+Your post files should be placed in `src/content/essays/` directory. You can also create subdirectories to better organize your posts and assets.
 
 ```
 src/content/posts/
@@ -120,13 +120,24 @@ This is a footnote reference[^1].
 
 # 4. Extended Markdown Features
 ## 4.1 GitHub Repository Cards
-You can add dynamic cards that link to GitHub repositories. On page load, the repository information is pulled from the GitHub API.
+You can add dynamic cards that link to GitHub repos. 
+On page load, the repository information is pulled from the `api.github.com`.
+The data will be cached for 12 hours in `localStorage`.
+And this site's `progress` module will cache data in the same way, too, which
+is used to display the `{user}`'s `issues` and `pulls` status.
+The `{user}` can be defined in the `config.ts` under `src/`.
 
 ::github{repo="apache/iggy"}
 ::github{repo="apache/opendal"}
 ::github{repo="apache/kafka"}
 
-Create a GitHub repository card with the code `::github{repo="<owner>/<repository>"}`.
+Create a GitHub repository card with the code `::github{repo="{owner}/{repository}"}`.
+
+```
+::github{repo="apache/iggy"}
+::github{repo="apache/opendal"}
+::github{repo="apache/kafka"}
+```
 
 ## 4.2 Admonitions
 Following types of admonitions are supported: `note` `tip` `important` `warning` `caution`
@@ -200,6 +211,8 @@ You can embed videos from various platforms like YouTube or Bilibili by copying 
 
 ### 5.1.1 YouTube
 <iframe width="100%" height="468" src="https://www.youtube.com/embed/5gIf0_xpFPI?si=N1WTorLKL0uwLsU_" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+
+---
 
 # 6. Draft Posts
 You can mark posts as drafts by setting `draft: true` in the frontmatter. Draft posts will not be visible to visitors but can be previewed during development.

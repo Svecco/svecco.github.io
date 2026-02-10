@@ -28,7 +28,6 @@
         padding: 0.125rem 0.25rem;
         margin: -0.125rem -0.25rem;
         transform: translateZ(0);
-        will-change: color, text-decoration-color;
         &:hover, &:active {
             @apply decoration-[var(--link-hover)];
         }
@@ -63,7 +62,6 @@
         background: oklch(0.45 0.01 var(--hue));
         color: white;
         transform: translateZ(0);
-        will-change: opacity, transform, background-color;
         &:hover {
             background: oklch(0.50 0.01 var(--hue));
             transform: scale(1.05) translateZ(0);
