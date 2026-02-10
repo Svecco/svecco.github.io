@@ -61,7 +61,6 @@
     /* Optimize button transition effects */
     .btn-card {
         @apply transition-colors duration-200 ease-in-out flex items-center justify-center bg-[var(--card-bg)] hover:bg-[var(--btn-card-bg-hover)] active:bg-[var(--btn-card-bg-active)];
-        will-change: background-color;
     }
     .btn-card.disabled {
         @apply pointer-events-none text-black/10 dark:text-white/10;
@@ -70,7 +69,6 @@
     .btn-plain {
         @apply transition-colors duration-200 ease-out relative flex items-center justify-center bg-none text-black/75 dark:text-white/75 rounded-md;
         color: color-mix(in srgb, currentColor 85%, var(--primary) 15%);
-        will-change: color, background-color;
         &:hover {
             color: var(--primary);
             background: color-mix(in srgb, var(--primary) 10%, transparent);
@@ -97,7 +95,6 @@
     /* Optimize button transition effects */
     .btn-regular {
         @apply transition-colors duration-200 ease-in-out flex items-center justify-center bg-[var(--btn-regular-bg)] hover:bg-[var(--btn-regular-bg-hover)] active:bg-[var(--btn-regular-bg-active)] text-[var(--btn-content)] dark:text-white/75;
-        will-change: background-color;
     }
     .link-underline {
         @apply underline decoration-2 decoration-dashed decoration-[var(--link-underline)] hover:decoration-[var(--link-hover)] active:decoration-[var(--link-active)] underline-offset-[0.25rem];
@@ -124,9 +121,8 @@
     /* Custom scrollbar style for TOC */
     #toc {
         /* Firefox */
-        scrollbar-width: middle;
+        scrollbar-width: auto;
         scrollbar-color: var(--scrollbar-bg) var(--card-bg);
-        will-change: scroll-position;
     }
     #toc::-webkit-scrollbar {
         width: 8px;
@@ -180,7 +176,6 @@
     }
     .btn-regular-dark {
         @apply transition-colors duration-200 ease-in-out flex items-center justify-center bg-[oklch(0.45_0.01_var(--hue))] hover:bg-[oklch(0.50_0.01_var(--hue))] active:bg-[oklch(0.55_0.01_var(--hue))] dark:bg-[oklch(0.30_0.02_var(--hue))] dark:hover:bg-[oklch(0.35_0.03_var(--hue))] dark:active:bg-[oklch(0.40_0.03_var(--hue))];
-        will-change: background-color;
     }
     .btn-regular-dark.success {
         @apply bg-[oklch(0.75_0.14_var(--hue))] dark:bg-[oklch(0.75_0.14_var(--hue))];

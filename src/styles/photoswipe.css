@@ -5,7 +5,6 @@
     /* Direct border-radius instead of separate classes */
     transform: translateZ(0);
     /* Hardware acceleration */
-    will-change: transform, background-color;
     backface-visibility: hidden;
 }
 .pswp__button--zoom {

@@ -4,14 +4,8 @@
 .animated-element {
   will-change: transform, opacity !important;
 }
-.btn-card:hover, .btn-plain:hover, .custom-md a:not(.no-styling):hover {
-  will-change: transform !important;
-}
 .copy-btn:hover {
   will-change: opacity, transform !important;
-}
-.katex-display-container {
-  will-change: scroll-position !important;
 }
 .animation-complete {
   will-change: auto !important;
@@ -41,9 +35,6 @@
 }
 .custom-md a:not(.no-styling) {
   will-change: auto !important;
-}
-.custom-md a:not(.no-styling):hover {
-  will-change: color, text-decoration-color !important;
 }
 .custom-md .copy-btn {
   will-change: auto !important;

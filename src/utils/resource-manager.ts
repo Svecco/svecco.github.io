@@ -122,14 +122,6 @@ class ResourceManager {
 		link.setAttribute("fetchpriority", priority);
 		document.head.appendChild(link);
 	}
-
-	observeElement(element: Element, config: ResourceConfig): void {
-		if (this.loadedResources.has(config.url)) return;
-
-		this.loadingQueue.push(config);
-		this.observer.observe(element);
-	}
-
 	private handleIntersection(entries: IntersectionObserverEntry[]): void {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting) {
@@ -182,12 +174,6 @@ class ResourceManager {
 				priority: "low",
 			});
 		});
-	}
-
-	cleanup(): void {
-		this.observer.disconnect();
-		this.loadingQueue = [];
-		this.loadedResources.clear();
 	}
 }
 
