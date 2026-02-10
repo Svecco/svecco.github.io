@@ -21,9 +21,12 @@ const {
 } = Astro.props;
 ---
 
-<a href={url} aria-label={label}>
+<a href={url} aria-label={label} class="block">
     <button
-        class={`w-full h-auto min-h-[2.5rem] rounded-lg bg-none transition-all py-2 pl-2 text-neutral-700 dark:text-neutral-300 ${admitted ? '' : 'opacity-50'}`}
+        class={`w-full h-auto min-h-[2.5rem] rounded-lg bg-none 
+        transition-all py-2 pl-2 text-neutral-1000 dark:text-neutral-100 
+        hover:bg-[var(--btn-regular-bg-hover)] active:scale-95 active:bg-[var(--btn-regular-bg-active)] 
+        ${admitted ? '' : 'opacity-65'}`}
     >
         <div class="flex items-center justify-between relative mr-2">
             <div class="flex items-center min-w-0">
