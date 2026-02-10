@@ -80,7 +80,7 @@
             transition-duration: 100ms;
         }
         &.scale-animation {
-            @apply expand-animation;
+            @apply expand-animation transition-colors;
             background: none;
             &:hover {
                 background: none;

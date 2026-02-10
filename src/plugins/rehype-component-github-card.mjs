@@ -7,7 +7,7 @@ import { h } from "hastscript";
  * @param {Object} properties - The properties of the component.
  * @param {string} properties.repo - The GitHub repository in the format "owner/repo".
  * @param {import('mdast').RootContent[]} children - The children elements of the component.
- * @returns {import('mdast').Parent} The created GitHub Card component.
+ * @returns {Element} The created GitHub Card component.
  */
 export function GithubCardComponent(properties, children) {
 	if (Array.isArray(children) && children.length !== 0)
@@ -54,27 +54,119 @@ export function GithubCardComponent(properties, children) {
 	const nForks = h(`div#${cardUuid}-forks`, { class: "gc-forks" }, "0K");
 	const nLicense = h(`div#${cardUuid}-license`, { class: "gc-license" }, "0K");
 
+	// Create inline script with full cache support
+	const scriptContent = `
+      (function() {
+        const REPO = "${repo}";
+        const CARD_ID = "${cardUuid}";
+        const CACHE_KEY = "github_repo_" + REPO.replace(///g, "_");
+        const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 hours
+        
+        console.log('[GITHUB-CARD] Initializing card for ' + REPO + ' (ID: ' + CARD_ID + ')');
+        console.log('[GITHUB-CARD] Cache key: ' + CACHE_KEY);
+        
+        function updateCard(data) {
+          try {
+            document.getElementById(CARD_ID + '-description').innerText = data.description?.replace(/:[a-zA-Z0-9_]+:/g, '') || "Description not set";
+            document.getElementById(CARD_ID + '-language').innerText = data.language || "Unknown";
+            document.getElementById(CARD_ID + '-forks').innerText = Intl.NumberFormat('en-us', { notation: "compact", maximumFractionDigits: 1 }).format(data.forks || 0).replaceAll("\u202f", '');
+            document.getElementById(CARD_ID + '-stars').innerText = Intl.NumberFormat('en-us', { notation: "compact", maximumFractionDigits: 1 }).format(data.stargazers_count || 0).replaceAll("\u202f", '');
+            const avatarEl = document.getElementById(CARD_ID + '-avatar');
+            avatarEl.style.backgroundImage = 'url(' + data.owner?.avatar_url + ')';
+            avatarEl.style.backgroundColor = 'transparent';
+            document.getElementById(CARD_ID + '-license').innerText = data.license?.spdx_id || "no-license";
+            document.getElementById(CARD_ID + '-card').classList.remove("fetch-waiting");
+          } catch (e) {
+            console.error('[GITHUB-CARD] Error updating card UI:', e);
+          }
+        }
+        
+        function handleError(error) {
+          console.warn('[GITHUB-CARD] Error loading ' + REPO + ':', error);
+          const card = document.getElementById(CARD_ID + '-card');
+          if (card) {
+            card.classList.add("fetch-error");
+            card.classList.remove("fetch-waiting");
+          }
+        }
+        
+        // Load from cache function
+        function loadFromCache() {
+          try {
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            if (!cachedData) {
+              console.log('[GITHUB-CARD] No cache found for ' + REPO);
+              return null;
+            }
+            
+            const { data, timestamp } = JSON.parse(cachedData);
+            const now = Date.now();
+            const age = now - timestamp;
+            
+            console.log('[GITHUB-CARD] Found cached data for ' + REPO + ', age: ' + Math.floor(age/(60*60*1000)) + ' hours');
+            
+            if (age < CACHE_DURATION) {
+              const remainingHours = Math.floor((CACHE_DURATION - age) / (60 * 60 * 1000));
+              console.log('[GITHUB-CARD] Using cached data for ' + REPO + ' (' + remainingHours + ' hours remaining)');
+              return data;
+            } else {
+              console.log('[GITHUB-CARD] Cache expired for ' + REPO + ', removing...');
+              localStorage.removeItem(CACHE_KEY);
+              return null;
+            }
+          } catch (e) {
+            console.error('[GITHUB-CARD] Cache loading error for ' + REPO + ':', e);
+            return null;
+          }
+        }
+        
+        // Save to cache function
+        function saveToCache(data) {
+          try {
+            const cacheData = {
+              data: data,
+              timestamp: Date.now()
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+            console.log('[GITHUB-CARD] Saved data to cache for ' + REPO);
+          } catch (e) {
+            console.error('[GITHUB-CARD] Cache save error for ' + REPO + ':', e);
+          }
+        }
+        
+        // Main execution
+        try {
+          const cachedData = loadFromCache();
+          if (cachedData) {
+            updateCard(cachedData);
+          } else {
+            console.log('[GITHUB-CARD] No valid cache found for ' + REPO + ', fetching from API');
+            fetch('https://api.github.com/repos/' + REPO, { referrerPolicy: "no-referrer" })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('API request failed: ' + response.status + ' ' + response.statusText);
+                }
+                return response.json();
+              })
+              .then(data => {
+                console.log('[GITHUB-CARD] Successfully fetched data for ' + REPO + ' from API');
+                updateCard(data);
+                saveToCache(data);
+                console.log('[GITHUB-CARD] Fetched ' + REPO + ' from API and saved to cache');
+              })
+              .catch(handleError);
+          }
+        } catch (e) {
+          console.error('[GITHUB-CARD] Critical error in card initialization:', e);
+          handleError(e);
+        }
+      })();
+    `;
+
 	const nScript = h(
 		`script#${cardUuid}-script`,
 		{ type: "text/javascript", defer: true },
-		`
-      fetch('https://api.github.com/repos/${repo}', { referrerPolicy: "no-referrer" }).then(response => response.json()).then(data => {
-        document.getElementById('${cardUuid}-description').innerText = data.description?.replace(/:[a-zA-Z0-9_]+:/g, '') || "Description not set";
-        document.getElementById('${cardUuid}-language').innerText = data.language;
-        document.getElementById('${cardUuid}-forks').innerText = Intl.NumberFormat('en-us', { notation: "compact", maximumFractionDigits: 1 }).format(data.forks).replaceAll("\u202f", '');
-        document.getElementById('${cardUuid}-stars').innerText = Intl.NumberFormat('en-us', { notation: "compact", maximumFractionDigits: 1 }).format(data.stargazers_count).replaceAll("\u202f", '');
-        const avatarEl = document.getElementById('${cardUuid}-avatar');
-        avatarEl.style.backgroundImage = 'url(' + data.owner.avatar_url + ')';
-        avatarEl.style.backgroundColor = 'transparent';
-        document.getElementById('${cardUuid}-license').innerText = data.license?.spdx_id || "no-license";
-        document.getElementById('${cardUuid}-card').classList.remove("fetch-waiting");
-        console.log("[GITHUB-CARD] Loaded card for ${repo} | ${cardUuid}.")
-      }).catch(err => {
-        const c = document.getElementById('${cardUuid}-card');
-        c?.classList.add("fetch-error");
-        console.warn("[GITHUB-CARD] (Error) Loading card for ${repo} | ${cardUuid}.")
-      })
-    `,
+		scriptContent,
 	);
 
 	return h(

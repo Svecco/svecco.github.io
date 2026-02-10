@@ -1,9 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
-import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
-
 export let githubUsername: string;
 
 interface GitHubIssue {
@@ -37,7 +34,6 @@ let groups: Group[] = [
 ];
 
 let error: string | null = null;
-
 let abortController: AbortController | null = null;
 
 function formatDate(dateString: string) {
@@ -61,34 +57,50 @@ function loadFromCache(): boolean {
 			const { data, timestamp } = JSON.parse(cachedData);
 			const now = Date.now();
 
-			// Check if cache is still valid
+			// Check if cache is still valid (12 hours)
 			if (now - timestamp < CACHE_EXPIRATION) {
 				groups = data;
+				const hoursLeft = Math.floor(
+					(timestamp + CACHE_EXPIRATION - now) / (60 * 60 * 1000),
+				);
+				const minutesLeft =
+					Math.floor((timestamp + CACHE_EXPIRATION - now) / (60 * 1000)) % 60;
+				console.log(
+					`[PROGRESS-PANEL] Loaded GitHub data from cache (valid for ${hoursLeft}h ${minutesLeft}m)`,
+				);
 				return true;
 			}
+			// Remove expired cache
+			localStorage.removeItem(CACHE_KEY);
+			console.log("[PROGRESS-PANEL] Cache expired, removing stale data");
+			console.log(
+				`[PROGRESS-PANEL] Cache was ${Math.floor((now - timestamp) / (60 * 60 * 1000))} hours old`,
+			);
 		}
 	} catch (e) {
-		console.error("Error loading from cache:", e);
+		console.error("[PROGRESS-PANEL] Error loading from cache:", e);
 	}
 	return false;
 }
 
 // Save data to cache
-function saveToCache(data: Group[]) {
+function saveToCache(data: Group[]): void {
 	try {
 		const cacheData = {
 			data: data,
 			timestamp: Date.now(),
 		};
 		localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+		console.log("[PROGRESS-PANEL] Saved GitHub data to cache");
 	} catch (e) {
-		console.error("Error saving to cache:", e);
+		console.error("[PROGRESS-PANEL] Error saving to cache:", e);
 	}
 }
 
+// Fetch with timeout
 async function fetchWithTimeout(
 	url: string,
-	timeout = 5000,
+	timeout = 8000,
 ): Promise<Response> {
 	abortController = new AbortController();
 
@@ -99,7 +111,6 @@ async function fetchWithTimeout(
 	try {
 		const response = await fetch(url, {
 			signal: abortController.signal,
-			// 添加性能优化的headers
 			headers: {
 				Accept: "application/vnd.github.v3+json",
 			},
@@ -113,18 +124,20 @@ async function fetchWithTimeout(
 }
 
 onMount(async () => {
-	// Try to load from cache first
+	console.log(`[PROGRESS-PANEL] Initializing with cache key: ${CACHE_KEY}`);
+	// First: try to load from cache
 	if (loadFromCache()) {
 		// Update loading states to false since we have cached data
 		groups = groups.map((group) => ({ ...group, loading: false }));
 		return;
 	}
 
+	// Cache miss or expired - fetch from API
+	console.log("[PROGRESS-PANEL] No valid cache found, fetching from API");
 	try {
-		// 性能优化：添加请求节流和错误处理
 		const response = await fetchWithTimeout(
 			`https://api.github.com/search/issues?q=author:${githubUsername}+state:open&sort=created&order=desc`,
-			8000, // 8秒超时
+			8000,
 		);
 
 		if (!response.ok) {
@@ -134,13 +147,9 @@ onMount(async () => {
 		}
 
 		const data = await response.json();
-
-		// Separate pull requests and issues
 		const pullRequests: GitHubIssue[] = [];
 		const issues: GitHubIssue[] = [];
-
-		// 性能优化：限制处理的数据量
-		const itemsToProcess = data.items.slice(0, 20); // 只处理前20个项目
+		const itemsToProcess = data.items.slice(0, 20);
 
 		itemsToProcess.forEach((item: GitHubIssue) => {
 			if (item.pull_request) {
@@ -156,13 +165,14 @@ onMount(async () => {
 		];
 
 		groups = updatedGroups;
-
-		// Save to cache
+		// Save to cache after successful fetch
 		saveToCache(updatedGroups);
+		console.log(
+			"[PROGRESS-PANEL] Fetched GitHub data from API and saved to cache",
+		);
 	} catch (err) {
-		console.error("Error fetching GitHub data:", err);
+		console.error("[PROGRESS-PANEL] Error fetching GitHub data:", err);
 		error = "Failed to load GitHub data. Please try again later.";
-		// Mark loading as complete even on error
 		groups = [
 			{ name: "PRs", items: [], loading: false },
 			{ name: "Issues", items: [], loading: false },
@@ -170,7 +180,6 @@ onMount(async () => {
 	}
 });
 
-// 组件卸载时清理
 import { onDestroy } from "svelte";
 
 onDestroy(() => {

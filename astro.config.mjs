@@ -27,7 +27,6 @@ import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
-// https://astro.build/config
 export default defineConfig({
 	site: "https://sve.moe/",
 	base: "/",
@@ -40,7 +39,7 @@ export default defineConfig({
 			theme: false,
 			animationClass: "transition-swup-",
 			containers: ["main", "#toc"],
-			smoothScrolling: false, // Disable default scroll plugin to prevent conflicts
+			smoothScrolling: false,
 			cache: true,
 			preload: true,
 			accessibility: true,
@@ -48,13 +47,11 @@ export default defineConfig({
 			updateBodyClass: false,
 			globalInstance: true,
 			animationSelector: '[class*="transition-swup-"]',
-			animationDuration: 300, // Further increased for better plugin timing alignment
+			animationDuration: 300,
 			throttleAnimation: true,
-			// Performance optimization: reduce plugin interference during transitions
 			animationTiming: "ease-out",
 			linkSelector: 'a[href^="/"], a[href^="."], a[href^="#"]',
 			preloadLimit: 3,
-			// DOM cleanup optimization - remove unused elements after transitions
 		}),
 		icon({
 			include: {
@@ -125,9 +122,9 @@ export default defineConfig({
 			parseDirectiveNode,
 		],
 		rehypePlugins: [
-			rehypeRemoveComments, // Remove HTML comments
-			rehypeRemoveEmptyAttribute, // Remove empty attributes
-			rehypeMinifyWhitespace, // Minify whitespace and remove empty text nodes
+			rehypeRemoveComments,
+			rehypeRemoveEmptyAttribute,
+			rehypeMinifyWhitespace,
 			rehypeKatex,
 			rehypeSlug,
 			[
@@ -174,43 +171,20 @@ export default defineConfig({
 			},
 		},
 		assetsInclude: ["**/*.backup", "**/*.bak", "**/*.new"],
-		// Asset optimization configuration
 		define: {
 			__ASSET_PREFIX__: JSON.stringify("/assets"),
 		},
 		build: {
-			// Set modern browser target for smaller bundles
 			target: "es2020",
-			// Enable faster minification
 			minify: "esbuild",
-			// Optimize CSS with advanced options
 			cssMinify: "lightningcss",
-			// Enable sourcemaps for production debugging
 			sourcemap: true,
-			// Enable module pre-bundling for faster builds
 			modulePreload: {
 				polyfill: true,
 			},
-			// Configure advanced build optimizations
 			cssCodeSplit: true,
-			// Enable smaller initial chunks
 			assetsInlineLimit: 4096,
-			// Asset optimization settings
 			assetsDir: "assets",
-			// Custom asset naming strategy
-
-			rollupOptions: {
-				onwarn(warning, warn) {
-					// temporarily suppress this warning
-					if (
-						warning.message.includes("is dynamically imported by") &&
-						warning.message.includes("but also statically imported by")
-					) {
-						return;
-					}
-					warn(warning);
-				},
-			},
 		},
 	},
 });

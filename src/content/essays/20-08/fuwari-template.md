@@ -35,6 +35,7 @@ draft       : {BOOLEAN}
 | `tags`        | The tags of the post.                                                                                                                                                                                       |
 | `category`    | The category of the post.                                                                                                                                                                                   |
 | `draft`       | If this post is still a draft, which won't be displayed.                                                                                                                                                    |
+| `location`    | The location where the essay was written.                                                                                                                                                                   |
 
 # 2. Post File Placement
 Your post files should be placed in `src/content/posts/` directory. You can also create subdirectories to better organize your posts and assets.
@@ -121,7 +122,9 @@ This is a footnote reference[^1].
 ## 4.1 GitHub Repository Cards
 You can add dynamic cards that link to GitHub repositories. On page load, the repository information is pulled from the GitHub API.
 
-::github{repo="saicaca/fuwari"}
+::github{repo="apache/iggy"}
+::github{repo="apache/opendal"}
+::github{repo="apache/kafka"}
 
 Create a GitHub repository card with the code `::github{repo="<owner>/<repository>"}`.
 
@@ -152,7 +155,11 @@ Negative potential consequences of an action.
 The title of the admonition can be customized.
 
 :::note[MY CUSTOM TITLE]
-This is a note with a custom title.
+This is a note with a custom title note.
+:::
+
+:::warning[MY CUSTOM TITLE]
+This is a note with a custom title warning.
 :::
 
 Basic syntax:
@@ -264,8 +271,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
----
-
 ```rust
 // src/lib.rs
 pub fn hello_world() {
@@ -278,8 +283,6 @@ pub fn hello_world() {
 cargo run
 ```
 
----
-
 ```bash title="Terminal session"
 cargo build --release
 ```
@@ -288,8 +291,6 @@ cargo build --release
 ```bash frame="none"
 rustc main.rs
 ```
-
----
 
 ```toml frame="code" title="Cargo.toml"
 [package]
