@@ -48,7 +48,7 @@ html.is-changed [data-swup-animation] {
     animation-delay: 0ms
 }
 #sidebar {
-    animation-delay: 80ms
+    animation-delay: 0ms
 }
 #swup-container {
     outline: none;
@@ -57,32 +57,32 @@ html.is-changed [data-swup-animation] {
     animation-delay: var(--content-delay);
 }
 .footer {
-    animation-delay: 200ms;
+    animation-delay: 100ms;
 }
 #banner-credit {
     animation-delay: 350ms;
 }
 #post-container :nth-child(1) {
-    animation-delay: calc(var(--content-delay) + 0ms)
-}
-#post-container :nth-child(2) {
     animation-delay: calc(var(--content-delay) + 50ms)
 }
-#post-container :nth-child(3) {
+#post-container :nth-child(2) {
     animation-delay: calc(var(--content-delay) + 100ms)
 }
+#post-container :nth-child(3) {
+    animation-delay: calc(var(--content-delay) + 150ms)
+}
 #post-container :nth-child(4) {
-    animation-delay: calc(var(--content-delay) + 175ms)
+    animation-delay: calc(var(--content-delay) + 200ms)
 }
 #post-container :nth-child(5) {
     animation-delay: calc(var(--content-delay) + 250ms)
 }
 #post-container :nth-child(6) {
-    animation-delay: calc(var(--content-delay) + 325ms)
+    animation-delay: calc(var(--content-delay) + 300ms)
 }
 #post-container :nth-child(n+7) {
-    animation-delay: calc(var(--content-delay) + 400ms);
-    animation-duration: 300ms;
+    animation-delay: calc(var(--content-delay) + 350ms);
+    animation-duration: 400ms;
 }
 @media (min-height: 1200px) {
     #post-container :nth-child(n+10) {
@@ -90,16 +90,6 @@ html.is-changed [data-swup-animation] {
         opacity: 1;
         transform: translateY(0);
     }
-}
-/* Performance monitoring helpers */
-.swup-performance-marker {
-    /* Invisible element for performance timing */
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-    z-index: -1;
 }
 /* Scroll optimization indicators */
 body.swup-transitioning {
@@ -114,4 +104,3 @@ body.swup-transitioning * {
 body.swup-plugins-paused {
     /* Simplified isolation during plugin operations */
 }
-/* Removed head pointer-events override */
