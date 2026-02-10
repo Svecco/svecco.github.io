@@ -54,6 +54,9 @@ html.is-changed [data-swup-animation] {
     outline: none;
 }
 #content-wrapper {
+    contain: layout paint;
+    content-visibility: auto;
+    contain-intrinsic-size: 100% 2160px;
     animation-delay: var(--content-delay);
 }
 .footer {
@@ -61,6 +64,11 @@ html.is-changed [data-swup-animation] {
 }
 #banner-credit {
     animation-delay: 350ms;
+}
+#post-container {
+    contain: layout paint;
+    content-visibility: auto;
+    contain-intrinsic-size: 100% 2160px;
 }
 #post-container :nth-child(1) {
     animation-delay: calc(var(--content-delay) + 50ms)

@@ -43,7 +43,6 @@
 		"astro-icon": "^1.1.5",
 		"fmt": "^2.0.0",
 		"hastscript": "^9.0.1",
-		"hyperlink": "^5.0.4",
 		"katex": "^0.16.28",
 		"markdown-it": "^14.1.0",
 		"mdast-util-to-string": "^4.0.0",
