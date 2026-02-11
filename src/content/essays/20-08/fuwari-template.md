@@ -119,7 +119,8 @@ This is a footnote reference[^1].
 [^1]: The Sky over Jade Abyss Lake, Beijing, China.
 
 # 4. Extended Markdown Features
-## 4.1 GitHub Repository Cards
+## 4.1 Customize Cards
+### 4.1.1 GitHub Repository Card
 You can add dynamic cards that link to GitHub repos. 
 On page load, the repository information is pulled from the `api.github.com`.
 The data will be cached for 12 hours in `localStorage`.
@@ -133,10 +134,23 @@ The `{user}` can be defined in the `config.ts` under `src/`.
 
 Create a GitHub repository card with the code `::github{repo="{owner}/{repository}"}`.
 
-```
+```markdown
 ::github{repo="apache/iggy"}
 ::github{repo="apache/opendal"}
 ::github{repo="apache/kafka"}
+```
+
+### 4.1.2 Personal Links Card
+
+:::hyperlink{href="https://stackoverflow.com/users/3675719/junchaw" title="Junchaw" avatar="/assets/links/Junchaw_34226239.webp" description="SRE@Tesla, full stack developer"}
+:::
+
+You can use codes below to create a personal links card. It will be loaded from the
+site source locally rather than from the outer web.
+
+```markdown
+:::hyperlink{href="https://stackoverflow.com/users/3675719/junchaw" title="Junchaw" avatar="/assets/links/Junchaw_34226239.webp" description="SRE@Tesla, full stack developer"}
+:::
 ```
 
 ## 4.2 Admonitions

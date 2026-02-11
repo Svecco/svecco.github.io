@@ -92,7 +92,7 @@ a.card-github
   padding: 1.1rem 1.5rem 1.1rem 1.5rem
   color: var(--tw-prose-body)
   border-radius: var(--radius-large)
-  text-decoration-thickness: 0px
+  text-decoration-thickness: 0
   text-decoration-line: none
 
   &:hover
@@ -230,6 +230,99 @@ a.card-github.fetch-waiting
 a.card-github.fetch-error
   pointer-events: all
   opacity: 1
+
+
+a.card-hyperlink
+  display: block
+  background: var(--license-block-bg)
+  position: relative
+  margin: 0.5rem 0
+  padding: 1.1rem 1.5rem
+  color: var(--tw-prose-body)
+  border-radius: var(--radius-large)
+  text-decoration: none
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1)
+
+  &:after
+    content: ''
+    position: absolute
+    right: 1.5rem
+    top: 50%
+    transform: translateY(-50%)
+    width: 4rem
+    height: 4rem
+    background-image: url("/assets/entities/tesla.svg")
+    background-size: contain
+    background-repeat: no-repeat
+    background-position: center
+    opacity: 0.7
+    transition: opacity 0.15s ease
+    html:not(.dark) &
+      filter: invert(1) brightness(0)
+
+  &:hover
+    background-color: var(--btn-regular-bg-hover)
+
+    &:after
+      opacity: 1
+
+    .hc-titlebar
+      color: var(--btn-content)
+
+      .hc-title
+        color: var(--btn-content)
+
+    .hc-description
+      color: var(--tw-prose-headings)
+
+  &:active
+    scale: 0.98
+    background-color: var(--btn-regular-bg-active)
+
+  .hc-titlebar
+    display: flex
+    align-items: center
+    flex-wrap: wrap
+    gap: 0.75rem
+    margin-bottom: 0.5rem
+    margin-right: 2.5rem
+    transition: color 0.15s ease
+    .hc-avatar
+      width: 2.5rem
+      height: 2.5rem
+      border-radius: 50%
+      background-size: cover
+      background-position: center
+    .hc-title
+      font-size: 1.25rem
+      font-weight: bold
+      color: var(--tw-prose-headings)
+      white-space: normal
+      word-wrap: break-word
+      overflow-wrap: break-word
+      flex: 1 1 auto
+      transition: color 0.15s ease
+
+  .hc-description
+    font-size: 1rem
+    font-weight: 300
+    line-height: 1.5rem
+    color: var(--tw-prose-body)
+    white-space: normal
+    word-wrap: break-word
+    overflow-wrap: break-word
+    margin-right: 2.5rem
+    transition: color 0.15s ease
+
+a.card-hyperlink.fetch-waiting
+  pointer-events: none
+  opacity: 0.7
+  .hc-description, .hc-title, .hc-avatar
+    background-color: var(--tw-prose-body)
+    color: transparent
+    opacity: 0.5
+    animation: pulsate 2s infinite linear
+    user-select: none
 
 @keyframes pulsate
   0%
