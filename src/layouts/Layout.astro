@@ -380,21 +380,49 @@ function showBanner() {
 	banner.classList.remove('opacity-0', 'scale-105');
 }
 
-function updateBackgroundState(isFullPage: boolean) {
+// Save background state to localStorage
+function saveBackgroundState(scale: string, brightness: string, blur: string) {
+	localStorage.setItem('bgScale', scale);
+	localStorage.setItem('bgBrightness', brightness);
+	localStorage.setItem('bgBlur', blur);
+}
+
+// Get saved background state from localStorage (with default values)
+function getSavedBackgroundState() {
+	return {
+		scale: localStorage.getItem('bgScale') || '1',
+		brightness: localStorage.getItem('bgBrightness') || '100%',
+		blur: localStorage.getItem('bgBlur') || '0px'
+	};
+}
+
+function updateBackgroundState(isFullPage: any) {
 	if (isFullPage) {
 		const isSpecialPage = window.location.pathname !== '/' && window.location.pathname !== '/index.html';
-		
+		let scale, brightness, blur;
+
 		if (isSpecialPage) {
-			// Special pages: background scaling, darkening, blurring
-			document.documentElement.style.setProperty('--bg-scale', '1.15');
-			document.documentElement.style.setProperty('--bg-brightness', '65%');
-			document.documentElement.style.setProperty('--bg-blur', '2px');
+			scale = '1.15';
+			brightness = '65%';
+			blur = '2px';
 		} else {
-			// Home page: restore normal state
-			document.documentElement.style.setProperty('--bg-scale', '1');
-			document.documentElement.style.setProperty('--bg-brightness', '100%');
-			document.documentElement.style.setProperty('--bg-blur', '0px');
+			scale = '1';
+			brightness = '100%';
+			blur = '0px';
 		}
+
+		// Set CSS properties
+		document.documentElement.style.setProperty('--bg-scale', scale);
+		document.documentElement.style.setProperty('--bg-brightness', brightness);
+		document.documentElement.style.setProperty('--bg-blur', blur);
+
+		// Persist state to localStorage (new line)
+		saveBackgroundState(scale, brightness, blur);
+	} else {
+		// Clear stored state when fullPageBackground is disabled (new block)
+		localStorage.removeItem('bgScale');
+		localStorage.removeItem('bgBrightness');
+		localStorage.removeItem('bgBlur');
 	}
 }
 
@@ -404,6 +432,7 @@ function init() {
 	preCreateKatexContainers();
 	initCustomScrollbar();
 	showBanner();
+	updateBackgroundState((window as any).FULL_PAGE_BACKGROUND);
 }
 
 init();
@@ -580,19 +609,12 @@ function initPhotoSwipe() {
 
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', () => {
-		// Initial background state setup
 		if ((window as any).FULL_PAGE_BACKGROUND) {
-			const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
-				
-			if (isHomePage) {
-				document.documentElement.style.setProperty('--bg-scale', '1');
-				document.documentElement.style.setProperty('--bg-brightness', '100%');
-				document.documentElement.style.setProperty('--bg-blur', '0px');
-			} else {
-				document.documentElement.style.setProperty('--bg-scale', '1.15');
-				document.documentElement.style.setProperty('--bg-brightness', '65%');
-				document.documentElement.style.setProperty('--bg-blur', '2px');
-			}
+			// Load saved state instead of hardcoding values (modified block)
+			const savedState = getSavedBackgroundState();
+			document.documentElement.style.setProperty('--bg-scale', savedState.scale);
+			document.documentElement.style.setProperty('--bg-brightness', savedState.brightness);
+			document.documentElement.style.setProperty('--bg-blur', savedState.blur);
 		}
 	});
 } else {
