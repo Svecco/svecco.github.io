@@ -126,7 +126,14 @@ export default defineConfig({
 			rehypeRemoveComments,
 			rehypeRemoveEmptyAttribute,
 			rehypeMinifyWhitespace,
-			rehypeKatex,
+			[
+				rehypeKatex,
+				{
+					renderElement: true,
+					preloadFonts: true,
+					throwOnError: true,
+				},
+			],
 			rehypeSlug,
 			[
 				rehypeComponents,

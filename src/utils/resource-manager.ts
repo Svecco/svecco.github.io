@@ -57,6 +57,26 @@ class ResourceManager {
 				priority: "medium",
 			});
 		});
+
+		const katexFonts = [
+			"/fonts/katex/KaTeX_Main-Regular.woff2",
+			"/fonts/katex/KaTeX_Math-Italic.woff2",
+			"/fonts/katex/KaTeX_Size1-Regular.woff2",
+			"/fonts/katex/KaTeX_Size2-Regular.woff2",
+			"/fonts/katex/KaTeX_Size3-Regular.woff2",
+			"/fonts/katex/KaTeX_Size4-Regular.woff2",
+		];
+
+		katexFonts.forEach((url) => {
+			this.preloadResource({
+				url,
+				type: "font",
+				priority: "high",
+				condition: () => {
+					return document.querySelector(".katex-display") !== null;
+				},
+			});
+		});
 	}
 
 	private preloadResource(config: ResourceConfig): void {

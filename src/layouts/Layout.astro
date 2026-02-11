@@ -1,7 +1,6 @@
 ---
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import SwupPluginOptimizer from "@components/SwupPluginOptimizer.astro";
-// import ModularBackground from "@components/background/ModularBackground.astro"; // Temporarily commented out, not in use
 import { profileConfig, siteConfig } from "@/config";
 import {
 	AUTO_MODE,
@@ -253,50 +252,6 @@ import {
 	BANNER_HEIGHT_EXTEND} from "../constants/constants";
 import { siteConfig } from '../config';
 
-/* Preload fonts */
-// (async function() {
-// 	try {
-// 		await Promise.all([
-// 			document.fonts.load("400 1em Roboto"),
-// 			document.fonts.load("700 1em Roboto"),
-// 		]);
-// 		document.body.classList.remove("hidden");
-// 	} catch (error) {
-// 		console.log("Failed to load fonts:", error);
-// 	}
-// })();
-
-/* TODO This is a temporary solution for style flicker issue when the transition is activated */
-/* issue link: https://github.com/withastro/astro/issues/8711, the solution get from here too */
-/* update: fixed in Astro 3.2.4 */
-/*
-function disableAnimation() {
-	const css = document.createElement('style')
-	css.appendChild(
-		document.createTextNode(
-			`*{
-              -webkit-transition:none!important;
-              -moz-transition:none!important;
-              -o-transition:none!important;
-              -ms-transition:none!important;
-              transition:none!important
-              }`
-		)
-	)
-	document.head.appendChild(css)
-
-	return () => {
-		// Force restyle
-		;(() => window.getComputedStyle(document.body))()
-
-		// Wait for next tick before removing
-		setTimeout(() => {
-			document.head.removeChild(css)
-		}, 1)
-	}
-}
-*/
-
 const bannerEnabled = !!document.getElementById('banner-wrapper')
 
 function setClickOutsideToClose(panel: string, ignores: string[]) {
@@ -327,108 +282,90 @@ function loadHue() {
 	setHue(getHue())
 }
 
-// Simple debouncing to prevent frequent recalculations
-let layoutDebounceTimer: number | null = null;
-let isProcessingBatch = false;
-
-function debounceLayoutOperation(operation: () => void, delay: number = 300) {
-	if (layoutDebounceTimer) {
-		clearTimeout(layoutDebounceTimer);
-	}
-	layoutDebounceTimer = window.setTimeout(() => {
-		operation();
-		layoutDebounceTimer = null;
-	}, delay);
+function preCreateKatexContainers() {
+	const katexDisplays = document.querySelectorAll('.katex-display');
+	katexDisplays.forEach(element => {
+		if (!element.closest('.katex-display-container')) {
+			const container = document.createElement('div');
+			container.className = 'katex-display-container';
+			container.setAttribute('aria-label', 'scrollable container for formulas');
+			element.parentNode!.insertBefore(container, element);
+			container.appendChild(element);
+			OverlayScrollbars(container, {
+				scrollbars: {
+					theme: 'scrollbar-base scrollbar-auto',
+					autoHide: 'leave',
+					autoHideDelay: 500,
+					autoHideSuspend: false
+				}
+			});
+			element.setAttribute('data-scrollbar-initialized', 'true');
+		}
+	});
 }
 
+// Simple debouncing to prevent frequent recalculations
 function initCustomScrollbar() {
-	// Prevent multiple simultaneous initializations
-	if (isProcessingBatch) return;
-	isProcessingBatch = true;
-	
-	try {
-		const bodyElement = document.querySelector('body');
-		if (!bodyElement) return;
-		
-		// Defer scrollbar initialization to avoid blocking animation frames
-		requestAnimationFrame(() => {
-			// Initialize OverlayScrollbars with contain property for layout isolation
-			OverlayScrollbars(
-				{
-					target: bodyElement,
-					cancel: {
-						nativeScrollbarsOverlaid: true,
-					}
-				}, {
-					scrollbars: {
-						theme: 'scrollbar-base scrollbar-auto py-1',
-						autoHide: 'move',
-						autoHideDelay: 500,
-						autoHideSuspend: false,
-					},
-				}
-			);
+	const bodyElement = document.querySelector('body');
+	if (!bodyElement) return;
+	OverlayScrollbars(
+		{
+			target: bodyElement,
+			cancel: {
+				nativeScrollbarsOverlaid: true,
+			}
+		}, {
+			scrollbars: {
+				theme: 'scrollbar-base scrollbar-auto py-1',
+				autoHide: 'move',
+				autoHideDelay: 500,
+				autoHideSuspend: false,
+			},
 		});
 
-		const katexElements = document.querySelectorAll('.katex-display') as NodeListOf<HTMLElement>;
-		
-		// Process KaTeX elements with additional delay to prevent layout thrashing
-		if (katexElements.length > 0) {
-			const katexObserverOptions = {
-				root: null,
-				rootMargin: '100px',
-				threshold: 0.1
-			};
+	const katexElements = document.querySelectorAll('.katex-display') as NodeListOf<HTMLElement>;
 
-			const processKatexElement = (element: HTMLElement) => {
-				if (!element.parentNode) return;
-				if (element.hasAttribute('data-scrollbar-initialized')) return;
+	const katexObserverOptions = {
+		root: null,
+		rootMargin: '100px',
+		threshold: 0.1
+	};
 
-				// Create container without aggressive containment
-				const container = document.createElement('div');
-				container.className = 'katex-display-container';
-				container.setAttribute('aria-label', 'scrollable container for formulas');
+	const processKatexElement = (element: HTMLElement) => {
+		if (!element.parentNode) return;
+		if (element.hasAttribute('data-scrollbar-initialized')) return;
 
-				// Direct DOM manipulation (simpler approach)
-				element.parentNode!.insertBefore(container, element);
-				container.appendChild(element);
+		const container = document.createElement('div');
+		container.className = 'katex-display-container';
+		container.setAttribute('aria-label', 'scrollable container for formulas');
 
-				// Initialize scrollbar with delay
-				requestAnimationFrame(() => {
-					OverlayScrollbars(container, {
-						scrollbars: {
-							theme: 'scrollbar-base scrollbar-auto',
-							autoHide: 'leave',
-							autoHideDelay: 500,
-							autoHideSuspend: false
-						}
-					});
-				});
+		element.parentNode.insertBefore(container, element);
+		container.appendChild(element);
 
-				element.setAttribute('data-scrollbar-initialized', 'true');
-			};
+		OverlayScrollbars(container, {
+			scrollbars: {
+				theme: 'scrollbar-base scrollbar-auto',
+				autoHide: 'leave',
+				autoHideDelay: 500,
+				autoHideSuspend: false
+			}
+		});
 
-			const katexObserver = new IntersectionObserver((entries, observer) => {
-				entries.forEach(entry => {
-					if (entry.isIntersecting) {
-						// Add extra delay for KaTeX processing during transitions
-						setTimeout(() => {
-							debounceLayoutOperation(() => {
-								processKatexElement(entry.target as HTMLElement);
-								observer.unobserve(entry.target);
-							});
-						}, 600); // 600ms delay to ensure animation completion
-					}
-				});
-			}, katexObserverOptions);
+		element.setAttribute('data-scrollbar-initialized', 'true');
+	};
 
-			katexElements.forEach(element => {
-				katexObserver.observe(element);
-			});
-		}
-	} finally {
-		isProcessingBatch = false;
-	}
+	const katexObserver = new IntersectionObserver((entries, observer) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				processKatexElement(entry.target as HTMLElement);
+				observer.unobserve(entry.target);
+			}
+		});
+	}, katexObserverOptions);
+
+	katexElements.forEach(element => {
+		katexObserver.observe(element);
+	});
 }
 
 function showBanner() {
@@ -464,6 +401,7 @@ function updateBackgroundState(isFullPage: boolean) {
 function init() {
 	loadTheme();
 	loadHue();
+	preCreateKatexContainers();
 	initCustomScrollbar();
 	showBanner();
 }
