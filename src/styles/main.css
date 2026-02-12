@@ -16,8 +16,7 @@
 @layer components {
     .card-base {
         @apply rounded-[var(--radius-large)] overflow-hidden bg-[var(--card-bg)] transition;
-        background-color: color-mix(in srgb, var(--card-bg) 90%, transparent) !important;
-        backdrop-filter: blur(4px);
+        background-color: color-mix(in srgb, var(--card-bg) 85%, transparent) !important;
     }
     /* Performance optimization: Remove expensive transition-all */
     h1, h2, h3, h4, h5, h6, p, span, li, ul, ol, blockquote, code, pre, table, th, td, strong {
