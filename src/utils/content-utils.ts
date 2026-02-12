@@ -29,18 +29,16 @@ async function getRawSortedEssays() {
 		);
 	});
 
-	const sorted = allEssays.sort((a, b) => {
+	return allEssays.sort((a, b) => {
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
 		return dateA > dateB ? -1 : 1;
 	});
-	return sorted;
 }
 
 // Get all posts (now only essays since moments is removed)
 async function getRawSortedPosts() {
-	const allEssays = await getRawSortedEssays();
-	return allEssays;
+	return await getRawSortedEssays();
 }
 
 export async function getSortedPosts(): Promise<CollectionEntry<"essays">[]> {
@@ -77,29 +75,14 @@ export type PostForList = {
 	slug: string;
 	data: CollectionEntry<"essays">["data"];
 };
-
-export async function getSortedPostsList(): Promise<PostForList[]> {
-	const sortedFullPosts = await getRawSortedPosts();
-
-	// delete post.body
-	const sortedPostsList = sortedFullPosts.map((post) => ({
-		slug: post.slug,
-		data: post.data,
-	}));
-
-	return sortedPostsList;
-}
-
 export async function getSortedEssaysList(): Promise<PostForList[]> {
 	const sortedFullEssays = await getRawSortedEssays();
 
 	// delete post.body
-	const sortedPostsList = sortedFullEssays.map((post) => ({
+	return sortedFullEssays.map((post) => ({
 		slug: post.slug,
 		data: post.data,
 	}));
-
-	return sortedPostsList;
 }
 
 export type Tag = {
@@ -147,10 +130,7 @@ export async function getCategoryList(): Promise<Category[]> {
 			return;
 		}
 
-		const categoryName =
-			typeof post.data.category === "string"
-				? post.data.category.trim()
-				: String(post.data.category).trim();
+		const categoryName = post.data.category.trim();
 
 		count[categoryName] = count[categoryName] ? count[categoryName] + 1 : 1;
 	});

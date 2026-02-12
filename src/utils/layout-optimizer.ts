@@ -1,174 +1,170 @@
 /**
  * Simplified Layout Utilities
- * Removed complex batching and caching while preserving core functionality
+ * Integrated with unified scroll manager for consistent behavior
  */
+import {
+	getBannerHeight,
+	getScrollTop,
+	getThreshold,
+	scrollManager,
+} from "./scroll-manager";
 
 /**
- * Optimized Scroll Handler
- * Uses standard scroll event handling with minimal optimization
+ * Layout Components Handler
+ * Manages UI component visibility based on scroll position
+ * Optimized for minimal DOM queries and reduced reflows/repaints
  */
-export class OptimizedScrollHandler {
-	private ticking = false;
+class LayoutComponentsHandler {
+	// Constant IDs for UI components
+	private readonly COMPONENT_IDS = {
+		BACK_TO_TOP: "back-to-top-btn",
+		TOC_WRAPPER: "toc-wrapper",
+		NAVBAR_WRAPPER: "navbar-wrapper",
+	} as const;
+
+	// Cached DOM elements (queried once at initialization)
+	private cachedElements: {
+		backToTopBtn: HTMLElement | null;
+		tocWrapper: HTMLElement | null;
+		navbarWrapper: HTMLElement | null;
+	} = {
+		backToTopBtn: null,
+		tocWrapper: null,
+		navbarWrapper: null,
+	};
 
 	constructor() {
 		this.init();
 	}
 
+	/**
+	 * Initialize handler: cache DOM elements, register listeners/callbacks
+	 */
 	private init(): void {
-		// Use passive event listener for better performance
-		window.addEventListener("scroll", this.onScroll.bind(this), {
-			passive: true,
-		});
+		// Cache DOM elements once (avoids repeated getElementById calls)
+		this.cacheDOMElements();
 
-		window.addEventListener("resize", this.onResize.bind(this), {
-			passive: true,
-		});
+		// Register with scroll manager (high priority for UI components)
+		scrollManager.registerCallback(
+			"layout-components",
+			this.handleScroll.bind(this),
+			10,
+		);
 
 		// Add keyboard event listener for Home/End key navigation
 		this.initKeyboardListener();
 
 		// Initialize navbar state on page load
-		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", () => {
-				this.initializeNavbarState();
-			});
-		} else {
-			this.initializeNavbarState();
-		}
+		this.initializeNavbarState();
 	}
 
+	/**
+	 * Cache DOM elements once at initialization (critical performance optimization)
+	 */
+	private cacheDOMElements(): void {
+		this.cachedElements.backToTopBtn = document.getElementById(
+			this.COMPONENT_IDS.BACK_TO_TOP,
+		);
+		this.cachedElements.tocWrapper = document.getElementById(
+			this.COMPONENT_IDS.TOC_WRAPPER,
+		);
+		this.cachedElements.navbarWrapper = document.getElementById(
+			this.COMPONENT_IDS.NAVBAR_WRAPPER,
+		);
+	}
+
+	/**
+	 * Initialize keyboard event listener for Home/End key navigation
+	 */
 	private initKeyboardListener(): void {
-		document.addEventListener("keydown", (event) => {
-			// Handle Home key - scroll to top
-			if (event.key === "Home") {
-				this.updateNavbarVisibility();
-			}
-			// Handle End key - scroll to bottom
-			else if (event.key === "End") {
-				this.updateNavbarVisibility();
-			}
-		});
+		document.addEventListener("keydown", this.handleKeyDown.bind(this));
 	}
 
-	private onResize(): void {
-		// Simple resize handler
-		this.updateNavbarVisibility();
+	/**
+	 * Centralized keyboard event handler (cleaner separation of concerns)
+	 */
+	private handleKeyDown(event: KeyboardEvent): void {
+		// Handle Home/End keys with unified navbar update
+		if (event.key === "Home" || event.key === "End") {
+			this.updateNavbarVisibility();
+		}
 	}
 
+	/**
+	 * Initialize navbar state on page load (no artificial delays)
+	 */
 	private initializeNavbarState(): void {
-		// Initialize without artificial delays
 		this.updateNavbarVisibility();
 	}
 
-	private onScroll(): void {
-		// Simple scroll throttling with requestAnimationFrame
-		if (!this.ticking) {
-			requestAnimationFrame(() => {
-				this.processScroll();
-				this.ticking = false;
-			});
-			this.ticking = true;
-		}
+	/**
+	 * Handle scroll events from scroll manager (optimized DOM updates)
+	 * @param scrollTop Current vertical scroll position
+	 */
+	private handleScroll(scrollTop: number): void {
+		const bannerHeight = getBannerHeight();
+
+		// Update back-to-top button visibility (uses cached element)
+		this.updateBackToTopVisibility(scrollTop, bannerHeight);
+
+		// Update TOC visibility (uses cached element)
+		this.updateTOCVisibility(scrollTop, bannerHeight);
+
+		// Update navbar visibility (reuses unified logic)
+		this.updateNavbarVisibility(scrollTop);
 	}
 
-	private processScroll(): void {
-		const scrollTop = Math.max(
-			document.body.scrollTop,
-			document.documentElement.scrollTop,
+	/**
+	 * Unified logic for back-to-top button visibility (reduces code duplication)
+	 * @param scrollTop Current scroll position
+	 * @param bannerHeight Height of page banner
+	 */
+	private updateBackToTopVisibility(
+		scrollTop: number,
+		bannerHeight: number,
+	): void {
+		if (!this.cachedElements.backToTopBtn) return;
+
+		// Batch class list modification (single DOM touch)
+		this.cachedElements.backToTopBtn.classList.toggle(
+			"hide",
+			scrollTop <= bannerHeight,
 		);
-
-		const bannerHeight = window.innerHeight * (35 / 100);
-		const navbarHeight = 72;
-
-		// Update back-to-top button
-		const backToTopBtn = document.getElementById("back-to-top-btn");
-		if (backToTopBtn) {
-			if (scrollTop > bannerHeight) {
-				backToTopBtn.classList.remove("hide");
-			} else {
-				backToTopBtn.classList.add("hide");
-			}
-		}
-
-		// Update TOC visibility
-		const toc = document.getElementById("toc-wrapper");
-		if (toc) {
-			if (scrollTop > bannerHeight) {
-				toc.classList.remove("toc-hide");
-			} else {
-				toc.classList.add("toc-hide");
-			}
-		}
-
-		// Update navbar visibility
-		const navbar = document.getElementById("navbar-wrapper");
-		if (navbar) {
-			const threshold = bannerHeight - navbarHeight - 16;
-			if (scrollTop >= threshold) {
-				navbar.classList.add("navbar-hidden");
-			} else {
-				navbar.classList.remove("navbar-hidden");
-			}
-		}
 	}
 
-	private updateNavbarVisibility(): void {
-		// Direct DOM manipulation without batching
-		const scrollTop = Math.max(
-			document.body.scrollTop,
-			document.documentElement.scrollTop,
+	/**
+	 * Unified logic for TOC visibility (reduces code duplication)
+	 * @param scrollTop Current scroll position
+	 * @param bannerHeight Height of page banner
+	 */
+	private updateTOCVisibility(scrollTop: number, bannerHeight: number): void {
+		if (!this.cachedElements.tocWrapper) return;
+
+		// Batch class list modification (single DOM touch)
+		this.cachedElements.tocWrapper.classList.toggle(
+			"toc-hide",
+			scrollTop <= bannerHeight,
 		);
+	}
 
-		const navbar = document.getElementById("navbar-wrapper");
-		if (navbar) {
-			const bannerHeight = window.innerHeight * (35 / 100);
-			const navbarHeight = 72;
-			const threshold = bannerHeight - navbarHeight - 16;
+	/**
+	 * Unified navbar visibility logic (eliminates duplicate code)
+	 * @param scrollTop Optional scroll position (uses current scroll if not provided)
+	 */
+	private updateNavbarVisibility(scrollTop?: number): void {
+		if (!this.cachedElements.navbarWrapper) return;
 
-			if (scrollTop >= threshold) {
-				navbar.classList.add("navbar-hidden");
-			} else {
-				navbar.classList.remove("navbar-hidden");
-			}
-		}
+		// Use provided scrollTop or get current if missing
+		const finalScrollTop = scrollTop ?? getScrollTop();
+		const threshold = getThreshold();
+
+		// Single class toggle (batch DOM update)
+		this.cachedElements.navbarWrapper.classList.toggle(
+			"navbar-hidden",
+			finalScrollTop >= threshold,
+		);
 	}
 }
 
-/**
- * Simplified TOC Scroller
- * Basic scroll functionality without complex optimization
- */
-export class OptimizedTOCScroller {
-	private readonly tocEl: HTMLElement | null = null;
-
-	constructor(tocElement: HTMLElement) {
-		this.tocEl = tocElement;
-	}
-
-	scrollToActiveHeading(topmost: HTMLElement, bottommost: HTMLElement): void {
-		if (!this.tocEl) return;
-
-		// Simple scroll calculation without caching
-		const tocHeight = this.tocEl.clientHeight;
-		const topmostRect = topmost.getBoundingClientRect();
-		const bottommostRect = bottommost.getBoundingClientRect();
-
-		let targetTop: number;
-		if (bottommostRect.bottom - topmostRect.top < 0.9 * tocHeight) {
-			targetTop = topmost.offsetTop - 32;
-		} else {
-			const bottommostOffsetTop = bottommost.offsetTop;
-			targetTop = bottommostOffsetTop - tocHeight * 0.8;
-		}
-
-		// Direct scroll without batching
-		this.tocEl.scrollTo({
-			top: targetTop,
-			left: 0,
-			behavior: "smooth",
-		});
-	}
-}
-
-// Export singleton instance
-new OptimizedScrollHandler();
+// Create singleton instance
+new LayoutComponentsHandler();

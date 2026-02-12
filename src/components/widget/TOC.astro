@@ -61,6 +61,7 @@ const maxLevel = siteConfig.toc.depth;
 </table-of-contents>}
 
 <script>
+import { smoothScrollToHash } from '../../utils/scroll-manager';
 
 class Navigation extends HTMLElement {
     tocEl: HTMLElement | null = null;
@@ -201,22 +202,14 @@ class Navigation extends HTMLElement {
     }
 
     /**
-     * Simple smooth scroll
+     * Use unified scroll manager with standard 160px offset
      */
     smoothScrollTo(hash: string): void {
-        const elementId = hash.substring(1);
-        const targetElement = document.getElementById(elementId);
+        const success = smoothScrollToHash(hash);
         
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-            
-            // Update URL
-            if (window.history && window.history.pushState) {
-                window.history.pushState(null, '', hash);
-            }
+        // Fallback if scroll manager fails
+        if (!success) {
+            console.warn(`Failed to scroll to hash: ${hash}`);
         }
     }
 }

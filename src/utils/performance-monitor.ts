@@ -121,8 +121,7 @@ class PerformanceMonitor {
 
 		// 监听首次用户交互
 		const handleFirstInput = () => {
-			const delay = performance.now() - startTime;
-			this.metrics.firstInputDelay = delay;
+			this.metrics.firstInputDelay = performance.now() - startTime;
 
 			// 清理事件监听器
 			["click", "keydown", "mousedown"].forEach((event) => {
@@ -208,33 +207,12 @@ class PerformanceMonitor {
 			}
 		}
 	}
-
-	/**
-	 * 获取当前性能指标
-	 */
-	getMetrics(): PerformanceMetrics {
-		return { ...this.metrics };
-	}
-
-	/**
-	 * 清理资源
-	 */
-	destroy(): void {
-		this.observer?.disconnect();
-		this.longTaskObserver?.disconnect();
-	}
 }
 
 // 创建全局性能监控实例
 export const performanceMonitor: PerformanceMonitor = new PerformanceMonitor();
 
 // 导出便捷函数
-export const measure: <T>(name: string, operation: () => T) => T =
-	performanceMonitor.measureOperation.bind(performanceMonitor);
-export const mark: (name: string) => void =
-	performanceMonitor.mark.bind(performanceMonitor);
-export const measureBetween: (
-	name: string,
-	startMark: string,
-	endMark: string,
-) => void = performanceMonitor.measure.bind(performanceMonitor);
+performanceMonitor.measureOperation.bind(performanceMonitor);
+performanceMonitor.mark.bind(performanceMonitor);
+performanceMonitor.measure.bind(performanceMonitor);

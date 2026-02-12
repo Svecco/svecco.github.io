@@ -176,7 +176,17 @@ export default defineConfig({
 	vite: {
 		server: {
 			watch: {
-				ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
+				ignored: [
+					"**/node_modules/**",
+					"**/dist/**",
+					"**/.git/**",
+					"**/public/assets/**",
+					"**/public/fonts/**",
+					"**/scripts/**",
+					"**/.vscode/**",
+				],
+				usePolling: false,
+				interval: 1000,
 			},
 		},
 		assetsInclude: ["**/*.backup", "**/*.bak", "**/*.new"],

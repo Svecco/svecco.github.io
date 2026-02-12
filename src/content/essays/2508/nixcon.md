@@ -114,7 +114,8 @@ but it was enough to scare me half to death. Well, since I'm here,
 I'd better get some experience out of it, and better **don't complain** again.
 
 Some of the machines on display were quite special. For instance, 
-there was a `Loongson 3A6000`[^3] capable of running NixOS and even 
+there was a [_**Loongson**_](https://www.loongson.cn/product/show?id=26)[^3]
+`3A6000` capable of running `NixOS` and even 
 **playing Minecraft**, which I hadn't expected at all. And, amidst **this 
 Linux meetup**, **I brought a Windows laptop**. Uh... maybe if I just keep 
 `Tailscale` SSHing into my workstation, nobody will notice. _Em mm, 
@@ -129,10 +130,10 @@ Detail can be found in [here](https://www.loongson.cn/EN).
 
 :::tip[About NixOS Compatibility]
 If even the `Loongson` can run it smoothly, compatibility shouldn't be an 
-issue. But my NixOS setup with an `R9 9950x` and `7200MHz` RAM is unstable, 
+issue. But my `NixOS` setup with an `R9 9950x` and `7200MHz` RAM is unstable, 
 throwing tons of `Corrected Errors` in `L1` cache. I've tried many to tackle 
 it, didn't work. I'm not sure if it's a hardware problem because... actually
-the instability only happens on NixOS :spoiler[LMAO]. Really reproducible, bro.
+the instability only happens on `NixOS` :spoiler[LMAO]. Really reproducible, bro.
 :::
 
 ---
@@ -148,7 +149,7 @@ It's Rust Calling. ~~Oops, wrong script.~~
 5.  **11:30** [**@Aleksana**](https://aleksana.moe/) Implementation deep dive: `Nix`/`Nixpkgs`/`NixOS`
 6.  **12:15** Project demo, lunch break and networking
 7.  **14:20** **@Jinser** Evangelize `Nix` effectively in the workplace
-8.  **14:40** [**@prince213**](https://prince213.top) `NixOS` mirror hosting **without Kubernetes**
+8.  **14:40** [**@prince213**](https://prince213.top) `NixOS` mirror hosting **without `Kubernetes`**
 9.  **15:15** **@Leah** `Nixpkgs` packaging from personal to upstream
 10. **15:50** **@linj** Panel: `Nix` **commercialization** in China
 11. **16:15** Afternoon coffee break and discussion
@@ -203,7 +204,7 @@ That said, it doesn’t seem to suit me all that well. First, there’s the
 my actual needs**. `Kubernetes` and `Podman` are more than enough for what I do.
 Just run the codes, **by server side**. ure, `Nix` has many advantages 
 compared to `Kubernetes` as well. So there are also some people 
-who prefer Nix, like the organizer of this event, [**@prince213**](https://prince213.top).
+who prefer `Nix`, like the organizer of this event, [**@prince213**](https://prince213.top).
 
 ![k8s.webp](offwego/k8s.webp)
 
