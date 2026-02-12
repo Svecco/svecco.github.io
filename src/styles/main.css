@@ -5,6 +5,10 @@
     --link-underline: currentColor;
     --link-hover: var(--primary);
     --link-active: var(--primary);
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE10+/Edge */
+    user-select: none;          /* Standard syntax */
 }
 @tailwind base;
 @tailwind components;
@@ -181,8 +185,9 @@
         @apply bg-[oklch(0.75_0.14_var(--hue))] dark:bg-[oklch(0.75_0.14_var(--hue))];
     }
 }
+/* Images are no longer clickable - cursor style removed */
 .custom-md img, #post-cover img {
-    @apply cursor-zoom-in;
+    @apply cursor-default;
 }
 ::selection {
     background-color: var(--selection-bg);
