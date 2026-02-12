@@ -113,9 +113,20 @@
             @apply content-none;
         }
     }
+
+    .katex-display {
+        min-height: 2.5em;
+        height: fit-content;
+        contain: layout style;
+        scrollbar-gutter: stable;
+    }
+
     .katex-display-container {
+        min-height: 2.5em;
         max-width: 100%;
         overflow-x: auto;
+        contain: layout style;
+        scrollbar-gutter: stable;
         margin: 1em 0;
     }
 }

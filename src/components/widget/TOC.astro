@@ -180,75 +180,7 @@ class Navigation extends HTMLElement {
             }
         }
     };
-
-    /**
-     * Initialize component when connected to DOM
-     */
-    connectedCallback() {
-        // Wait for content to be ready
-        const proseElement = document.querySelector('.prose');
-        if (proseElement) {
-            proseElement.addEventListener('animationend', () => {
-                this.init();
-            }, { once: true });
-        } else {
-            // Fallback initialization
-            setTimeout(() => {
-                this.init();
-            }, 100);
-        }
-    }
-
-    /**
-     * Initialize TOC functionality
-     */
-    init() {
-        this.tocEl = document.getElementById("toc-inner-wrapper");
-        if (!this.tocEl) return;
-
-        this.tocEntries = Array.from(
-            document.querySelectorAll<HTMLAnchorElement>("#toc a[href^='#']")
-        );
-
-        if (this.tocEntries.length === 0) return;
-
-        this.sections = new Array(this.tocEntries.length);
-        const headings = new Array(this.tocEntries.length);
-        
-        for (let i = 0; i < this.tocEntries.length; i++) {
-            const id = decodeURIComponent(this.tocEntries[i].hash?.substring(1));
-            const heading = document.getElementById(id);
-            const section = heading?.parentElement;
-            
-            if (heading instanceof HTMLElement && section instanceof HTMLElement) {
-                headings[i] = heading;
-                this.sections[i] = section;
-                this.headingIdxMap.set(id, i);
-            }
-        }
-        
-        this.active = new Array(this.tocEntries.length).fill(false);
-
-        // Start observing sections
-        this.sections.forEach((section) =>
-            this.observer.observe(section)
-        );
-
-        this.fallback();
-        this.update();
-    }
-
-    /**
-     * Cleanup when component is disconnected
-     */
-    disconnectedCallback() {
-        this.sections.forEach((section: HTMLElement) =>
-            this.observer.unobserve(section)
-        );
-        this.observer.disconnect();
-    }
-
-    /**
+	/**
      * Initialize smooth scrolling behavior for TOC links
      * This replaces the default anchor behavior that was disabled by Swup
      */
