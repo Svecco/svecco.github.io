@@ -1,5 +1,5 @@
 ---
-title: Shanghai Nix Conference
+title: Nix Conference Shanghai
 published: 2025-08-16
 category: Essays
 location: Shanghai, China
@@ -15,9 +15,9 @@ but ended up **rewriting** almost the **entire** essay, edited on **Feb 12, 2026
 :::
 
 :::tip[Preface]
-`GMT+8` This [Meetup](https://prince213.top/events/nixos-cn-meetup-1/) took place 
+`GMT+8` This [event](https://prince213.top/events/nixos-cn-meetup-1/) took place 
 on August **9th, 10th** in [Shanghai, China](https://en.wikipedia.org/wiki/Shanghai), 
-and was hosted by [@prince213](https://prince213.top). It is the **first** meetup in China 
+and was hosted by [@prince213](https://prince213.top). It is the **first** conference in China 
 dedicated to `Nix`. As I didn't take many 
 photos at the time, the images used in this article may have been taken by 
 other attendees. I will provide a list of photographers in the footnotes.
@@ -76,7 +76,7 @@ this trip gave me so many **firsts**.
 - Leaving [Zhejiang Province](https://en.wikipedia.org/wiki/Zhejiang)[^2]
 (Like **California** in the U.S.) **;**
 - Take a high speed train and a subway rides **;**
-- Participating in a social meetup individually **;**
+- Participating in a social conference individually **;**
 - And many many others **...**
 :::
 
@@ -117,7 +117,7 @@ Some of the machines on display were quite special. For instance,
 there was a [_**Loongson**_](https://www.loongson.cn/product/show?id=26)[^3]
 `3A6000` capable of running `NixOS` and even 
 **playing Minecraft**, which I hadn't expected at all. And, amidst **this 
-Linux meetup**, **I brought a Windows laptop**. Uh... maybe if I just keep 
+linux con**, **I brought a Windows laptop**. Uh... maybe if I just keep 
 `Tailscale` SSHing into my workstation, nobody will notice. _Em mm, 
 I hope._ :spoiler[Fine, I got caught later.]
 

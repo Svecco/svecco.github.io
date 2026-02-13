@@ -19,7 +19,7 @@ I use [Fedora](https://fedoraproject.org/) now btw, works.
 
 Looking back, endless ricing, package tweaking, and "network engineering"
 don’t actually improve my core skills.[^4] What’s more:
-:spoiler[Linear algebra] is far more :spoiler[sexy, honestly.]
+:spoiler[Linear algebra] is far more :spoiler[sexy], honestly.
 
 Despite a heavy academic workload and a tight daily schedule,
 I’m always happy to exchange ideas and learn together with others.
@@ -37,7 +37,7 @@ past few years.
 :::
 
 [^1]: Currently `@Svecco` from **2025**. Past `@Angechory` in **2017-2025**, `@Nyxvectar` in **2024-2025**.
-[^2]: GitHub UID [70339231](https://api.github.com/users/Nyxvectar), username is `@Nyxvectar`, discarded after attending [NixOS Meetup](https://nixos.party/).
+[^2]: GitHub UID [70339231](https://api.github.com/users/Nyxvectar), which is `@Nyxvectar`, discarded after attending [NixCN Conference](https://nixos.party/).
 [^3]: Therefore, this website **no longer** enables the function of friends' linking.
 [^4]: I have to admit that I have a problem with **only** scratching the **surface** of things, and it’s really harmful.
 If anyone notices this about me, feel free to **call me out directly**.
