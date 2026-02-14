@@ -1,11 +1,9 @@
 ---
 // @ts-nocheck
 interface Props {
-	/** 背景图片路径 */
 	backgroundImage: string;
 	/** Effect type: 'linear' (homepage linear transition) | 'fixed' (fixed state) */
 	effectType: "linear" | "fixed";
-	/** 自定义类名 */
 	class?: string;
 }
 
@@ -23,7 +21,6 @@ const {
 >
 </div>
 
-// 预加载背景图片以提高性能
 <link rel="preload" href={backgroundImage} as="image" fetchpriority="high" />
 
 <style is:global>
