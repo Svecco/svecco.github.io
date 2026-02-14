@@ -107,6 +107,8 @@ Too bad it's a night flight, nothing is visible.
 _(Left is the photo of the venue, taken by [@prince213](https://prince213.top)_ 
 _on **August, 6th**. Right are tags of attendees)_
 
+![waiting.webp](patch/waiting.webp)
+
 Volunteers had already arrived early that day to set up the venue. 
 Since it was the first of its kind for `Nix` in China, objectively speaking, 
 attendance wasn't huge around _60_ people judging by the name tags,
@@ -130,7 +132,7 @@ Detail can be found in [here](https://www.loongson.cn/EN).
 
 :::tip[About NixOS Compatibility]
 If even the `Loongson` can run it smoothly, compatibility shouldn't be an 
-issue. But my `NixOS` setup with an `R9 9950x` and `7200MHz` RAM is unstable, 
+issue. But my `NixOS` setup with an `R9 9950x` and `7200MHz` RAM(`ECC:ON`) is unstable, 
 throwing tons of `Corrected Errors` in `L1` cache. I've tried many to tackle 
 it, didn't work. I'm not sure if it's a hardware problem because... actually
 the instability only happens on `NixOS` :spoiler[LMAO]. Really reproducible, bro.
@@ -139,7 +141,7 @@ the instability only happens on `NixOS` :spoiler[LMAO]. Really reproducible, bro
 ---
 
 # Ownership Moved to Main
-It's Rust Calling. ~~Oops, wrong script.~~
+It's **Rust** Calling! ~~Oops, wrong script.~~
 ## Routines and Arrangements
 ### Day 1
 1.  **09:30** On-site check-in and registration
@@ -207,11 +209,13 @@ compared to `Kubernetes` as well. So there are also some people
 who prefer `Nix`, like the organizer of this event, [**@prince213**](https://prince213.top).
 
 ![k8s.webp](offwego/k8s.webp)
+![continue.webp](patch/continue.webp)
 
 Of course, there are also some special cases, like
 [**@ryan4yin**](https://thiscute.world/en/),
 the **author** of 
 [**_The Nix & Flakes Book_**](https://nixos-and-flakes.thiscute.world/).
+
 ![ryan.webp](offwego/ryan.webp)
 
 :::important[Translation in `YAML`]
@@ -234,6 +238,9 @@ messages:
     content: "I'm a professional myself. This is the level of complexity I deal with at work every day, so it's totally fine for me to use this setup personally."
 ```
 :::
+
+![ryan_lt.webp](patch/ryan_lt.webp)
+_(above is **Ryan Yin**'s laptop)_
 
 From community side,
 contributors to the Nix community come from all over the world.
@@ -323,6 +330,8 @@ Just a heads up, she's usually busy.
 is one of the vital figures in the Nix community,
 a **dedicated** contributor, and a pretty **respected** person for me.
 Although she participated in online way, we still have a, em, _memento_.
+
+![presidenta.webp](patch/presidenta.webp)
 
 ### Old Friend
 
