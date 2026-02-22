@@ -1,0 +1,22 @@
+---
+import ArchivePanel from "../components/ArchivePanel.svelte";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { getSortedEssaysList } from "../utils/content-utils";
+
+// 获取所有 essays 列表
+const sortedPostsList = await getSortedEssaysList();
+console.log("Archive essays load - found:", sortedPostsList.length);
+---
+
+<MainGridLayout>
+    {
+        sortedPostsList && sortedPostsList.length > 0 ? (
+            <ArchivePanel sortedPosts={sortedPostsList} tags={[]} categories={[]} client:only="svelte"></ArchivePanel>
+        ) : (
+            <div class="p-8 text-center">
+                <h1 class="text-2xl font-bold mb-4">Welcome to Essays</h1>
+                <p class="text-gray-600">No essays published yet. Check back soon!</p>
+            </div>
+        )
+    }
+</MainGridLayout>

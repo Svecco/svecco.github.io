@@ -1,0 +1,86 @@
+---
+// @ts-nocheck
+interface Props {
+	backgroundImage: string;
+	/** Effect type: 'linear' (homepage linear transition) | 'fixed' (fixed state) */
+	effectType: "linear" | "fixed";
+	class?: string;
+}
+
+const {
+	backgroundImage,
+	effectType = "linear",
+	class: customClass = "",
+} = Astro.props;
+---
+
+<div 
+  class={`modular-background ${customClass}`}
+  data-effect-type={effectType}
+  style={`background-image: url('${backgroundImage}');`}
+>
+</div>
+
+<link rel="preload" href={backgroundImage} as="image" fetchpriority="high" />
+
+<script is:inline>
+class ModularBackground {
+  constructor(container) {
+    this.container = container;
+    this.effectType = container.dataset.effectType;
+    this.scrollTop = 0;
+    this.rafId = null;
+    
+    this.init();
+  }
+  
+  init() {
+    if (this.effectType === 'linear') {
+      this.setupLinearEffect();
+    }
+    // fixed type doesn't need additional initialization
+  }
+  
+  setupLinearEffect() {
+    const handleScroll = () => {
+      this.scrollTop = window.scrollY;
+      
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+      }
+      
+      this.rafId = requestAnimationFrame(() => {
+        this.updateLinearEffect();
+        this.rafId = null;
+      });
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    
+    // Initial update
+    this.updateLinearEffect();
+  }
+  
+  updateLinearEffect() {
+    const scrollPercent = Math.min(this.scrollTop / (window.innerHeight * 0.8), 1);
+    const easedPercent = 1 - Math.pow(1 - scrollPercent, 2);
+    
+    const scaleValue = 1 + (easedPercent * 0.15);
+    const brightnessValue = 100 - (easedPercent * 5);
+    const blurValue = easedPercent * 2;
+    
+    document.documentElement.style.setProperty('--bg-scale', scaleValue);
+    document.documentElement.style.setProperty('--bg-brightness', `${brightnessValue}%`);
+    document.documentElement.style.setProperty('--bg-blur', `${blurValue}px`);
+  }
+}
+
+// Initialize all modular background components
+document.addEventListener('DOMContentLoaded', () => {
+  const backgroundElements = document.querySelectorAll('.modular-background');
+  backgroundElements.forEach(el => {
+    new ModularBackground(el);
+  });
+});
+</script>

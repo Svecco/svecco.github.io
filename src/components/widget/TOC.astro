@@ -1,0 +1,221 @@
+---
+import { url } from "@utils/url-utils.ts";
+import type { MarkdownHeading } from "astro";
+import { siteConfig } from "@/config.ts";
+
+interface Props {
+	class?: string;
+	headings?: MarkdownHeading[];
+}
+
+let { headings = [] } = Astro.props;
+
+let minDepth = 10;
+for (const heading of headings) {
+	minDepth = Math.min(minDepth, heading.depth);
+}
+
+const className = Astro.props.class;
+const isSupportedRoute =
+	Astro.url.pathname.startsWith(url("/posts/")) ||
+	Astro.url.pathname.startsWith(url("/essays/"));
+
+const removeTailingHash = (text: string) => {
+	let lastIndexOfHash = text.lastIndexOf("#");
+	if (lastIndexOfHash !== text.length - 1) {
+		return text;
+	}
+
+	return text.substring(0, lastIndexOfHash);
+};
+
+let heading1Count = 1;
+
+const maxLevel = siteConfig.toc.depth;
+---
+{isSupportedRoute &&
+<table-of-contents class:list={[className, "group toc-accelerate"]}>
+    {headings.filter((heading) => heading.depth < minDepth + maxLevel).map((heading) =>
+            <a href={`#${heading.slug}`} class="px-3 flex gap-2 relative transition w-full min-h-9 rounded-xl
+        hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] py-2 interactive-accelerate
+    ">
+                <div class:list={["transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold",
+                    {
+                        "bg-[var(--toc-badge-bg)] text-[var(--btn-content)]": heading.depth == minDepth,
+                        "ml-4": heading.depth == minDepth + 1,
+                        "ml-8": heading.depth == minDepth + 2,
+                    }
+                ]}
+                >
+                    {heading.depth == minDepth && heading1Count++}
+                    {heading.depth == minDepth + 1 && <div class="transition w-2 h-2 rounded-[0.1875rem] bg-[var(--toc-badge-bg)]"></div>}
+                    {heading.depth == minDepth + 2 && <div class="transition w-1.5 h-1.5 rounded-sm bg-black/5 dark:bg-white/10"></div>}
+                </div>
+                <div class:list={["transition text-sm", {
+                    "text-50": heading.depth == minDepth || heading.depth == minDepth + 1,
+                    "text-30": heading.depth == minDepth + 2,
+                }]}>{removeTailingHash(heading.text)}</div>
+            </a>
+    )}
+
+</table-of-contents>}
+
+<script>
+import { smoothScrollToHash } from '../../utils/scroll-manager';
+
+class Navigation extends HTMLElement {
+    tocEl: HTMLElement | null = null;
+    visibleClass = "visible";
+    observer: IntersectionObserver;
+    anchorNavTarget: HTMLElement | null = null;
+    headingIdxMap = new Map<string, number>();
+    sections: HTMLElement[] = [];
+    tocEntries: HTMLAnchorElement[] = [];
+    active: boolean[] = [];
+    
+    constructor() {
+        super();
+        
+        // Simple IntersectionObserver configuration
+        this.observer = new IntersectionObserver(
+            this.markVisibleSection, 
+            { 
+                threshold: 0 // Simple threshold
+            }
+        );
+        
+        // Add smooth scroll behavior for TOC links
+        this.initSmoothScroll();
+    };
+
+    /**
+     * Simple IntersectionObserver callback
+     */
+    markVisibleSection = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+            const id = entry.target.children[0]?.getAttribute("id");
+            const idx = id ? this.headingIdxMap.get(id) : undefined;
+            
+            if (idx !== undefined) {
+                this.active[idx] = entry.isIntersecting;
+            }
+
+            if (entry.isIntersecting && this.anchorNavTarget == entry.target.firstChild) {
+                this.anchorNavTarget = null;
+            }
+        });
+
+        // Simple fallback and update
+        this.fallback();
+        this.update();
+    };
+
+    /**
+     * Simple update method
+     */
+    private update(): void {
+        requestAnimationFrame(() => {
+            this.toggleActiveHeading();
+            this.scrollToActiveHeading();
+        });
+    }
+
+    toggleActiveHeading = () => {
+        // 简化版本：只处理基本的active状态切换
+        let i = this.active.length - 1;
+        while (i >= 0 && !this.active[i]) {
+            this.tocEntries[i].classList.remove(this.visibleClass);
+            i--;
+        }
+        while (i >= 0 && this.active[i]) {
+            this.tocEntries[i].classList.add(this.visibleClass);
+            i--;
+        }
+        while (i >= 0) {
+            this.tocEntries[i].classList.remove(this.visibleClass);
+            i--;
+        }
+    };
+
+    scrollToActiveHeading = () => {
+        // Simple scroll to active heading
+        if (this.anchorNavTarget || !this.tocEl) return;
+        const activeHeading =
+            document.querySelectorAll<HTMLDivElement>(`#toc .${this.visibleClass}`);
+        if (!activeHeading.length) return;
+
+        const topmost = activeHeading[0];
+        const bottommost = activeHeading[activeHeading.length - 1];
+
+        // Simple scroll calculation
+        const tocHeight = this.tocEl.clientHeight;
+        let top;
+        
+        if (bottommost.getBoundingClientRect().bottom -
+            topmost.getBoundingClientRect().top < 0.9 * tocHeight)
+            top = topmost.offsetTop - 32;
+        else
+            top = bottommost.offsetTop - tocHeight * 0.8;
+
+        this.tocEl.scrollTo({
+            top,
+            left: 0,
+            behavior: "smooth",
+        });
+    };
+
+    /**
+     * Simple fallback method
+     */
+    fallback = () => {
+        if (!this.sections.length) return;
+
+        // Simple viewport check
+        for (let i = 0; i < this.sections.length; i++) {
+            const rect = this.sections[i].getBoundingClientRect();
+            
+            if (rect.top <= window.innerHeight * 0.5 && rect.bottom >= 0) {
+                this.active.fill(false);
+                this.active[i] = true;
+                break;
+            }
+        }
+    };
+	/**
+     * Initialize smooth scrolling behavior for TOC links
+     * This replaces the default anchor behavior that was disabled by Swup
+     */
+    initSmoothScroll(): void {
+        // Handle clicks on TOC links
+        this.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            const link = target.closest('a[href^="#"]');
+            
+            if (link) {
+                e.preventDefault();
+                const hash = link.getAttribute('href');
+                if (hash) {
+                    this.smoothScrollTo(hash);
+                }
+            }
+        });
+    }
+
+    /**
+     * Use unified scroll manager with standard 160px offset
+     */
+    smoothScrollTo(hash: string): void {
+        const success = smoothScrollToHash(hash);
+        
+        // Fallback if scroll manager fails
+        if (!success) {
+            console.warn(`Failed to scroll to hash: ${hash}`);
+        }
+    }
+}
+
+// Register custom element
+if (!customElements.get("table-of-contents")) {
+    customElements.define("table-of-contents", Navigation);
+}
+</script>

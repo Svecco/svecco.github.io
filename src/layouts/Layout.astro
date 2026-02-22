@@ -1,0 +1,541 @@
+---
+import ConfigCarrier from "@components/ConfigCarrier.astro";
+import SwupPluginOptimizer from "@components/SwupPluginOptimizer.astro";
+import { profileConfig, siteConfig } from "@/config";
+import {
+	AUTO_MODE,
+	BANNER_HEIGHT,
+	BANNER_HEIGHT_EXTEND,
+	BANNER_HEIGHT_HOME,
+	DARK_MODE,
+	DEFAULT_THEME,
+	LIGHT_MODE,
+	PAGE_WIDTH,
+} from "../constants/constants";
+import { defaultFavicons } from "../constants/icon";
+import type { Favicon } from "../types/config";
+import { pathsEqual, url } from "../utils/url-utils";
+import "katex/dist/katex.css";
+
+interface Props {
+	title?: string;
+	banner?: string;
+	description?: string;
+	lang?: string;
+	setOGTypeArticle?: boolean;
+}
+
+let { title, banner, description, lang, setOGTypeArticle } = Astro.props;
+
+// apply a class to the body element to decide the height of the banner, only used for initial page load
+// Swup can update the body for each page visit, but it's after the page transition, causing a delay for banner height change
+// so use Swup hooks instead to change the height immediately when a link is clicked
+const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
+
+// defines global CSS variables
+// why doing this in Layout instead of GlobalStyles: https://github.com/withastro/astro/issues/6728#issuecomment-1502203757
+const configHue = siteConfig.themeColor.hue;
+if (!banner || banner.trim() === "") {
+}
+
+// TODO don't use post cover as banner for now
+banner = siteConfig.banner.src;
+
+const enableBanner = siteConfig.banner.enable;
+const fullPageBackground =
+	siteConfig.banner.fullPage && siteConfig.banner.enable;
+
+let pageTitle: string;
+if (title) {
+	pageTitle = `${title} - ${siteConfig.title}`;
+} else {
+	pageTitle = `${siteConfig.title} - ${siteConfig.subtitle}`;
+}
+
+const favicons: Favicon[] =
+	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
+
+// const siteLang = siteConfig.lang.replace('_', '-')
+if (!lang) {
+	lang = `${siteConfig.lang}`;
+}
+const siteLang = lang.replace("_", "-");
+
+const bannerOffsetByPosition = {
+	top: `${BANNER_HEIGHT_EXTEND}vh`,
+	center: `${BANNER_HEIGHT_EXTEND / 2}vh`,
+	bottom: "0",
+};
+const bannerOffset =
+	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+---
+
+<!DOCTYPE html>
+<html lang={siteLang} 
+	  class="bg-[var(--page-bg)] transition text-[14px] md:text-[16px]"
+	  class:list={[fullPageBackground ? 'has-full-background' : '']}
+	  data-overlayscrollbars-initialize
+>
+	<head>
+
+		<title>{pageTitle}</title>
+
+		<meta charset="UTF-8" />
+		<meta name="description" content={description || pageTitle}>
+		<meta name="author" content={profileConfig.name}>
+
+		<meta property="og:site_name" content={siteConfig.title}>
+		<meta property="og:url" content={Astro.url}>
+		<meta property="og:title" content={pageTitle}>
+		<meta property="og:description" content={description || pageTitle}>
+		{setOGTypeArticle ? (
+        <meta property="og:type" content="article" />
+        ) : (
+        <meta property="og:type" content="website" />
+        )}
+
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="twitter:url" content={Astro.url}>
+		<meta name="twitter:title" content={pageTitle}>
+		<meta name="twitter:description" content={description || pageTitle}>
+
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		
+		<!-- Preload background image for better performance -->
+		{fullPageBackground && (
+			<link rel="preload" as="image" href={banner} fetchpriority="high" />
+		)}
+		
+		{favicons.map(favicon => (
+			<link rel="icon"
+				  href={favicon.src.startsWith('/') ? url(favicon.src) : favicon.src}
+				  sizes={favicon.sizes}
+				  media={favicon.theme && `(prefers-color-scheme: ${favicon.theme})`}
+			/>
+		))}
+
+		<!-- Set the theme before the page is rendered to avoid a flash -->
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue, fullPageBackground, banner}}>
+			// Make fullPageBackground available globally
+			window.FULL_PAGE_BACKGROUND = fullPageBackground;
+			// Load the theme from local storage
+			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
+			switch (theme) {
+				case LIGHT_MODE:
+					document.documentElement.classList.remove('dark');
+					break
+				case DARK_MODE:
+					document.documentElement.classList.add('dark');
+					break
+				case AUTO_MODE:
+					if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+						document.documentElement.classList.add('dark');
+					} else {
+						document.documentElement.classList.remove('dark');
+					}
+			}
+
+			// Load the hue from local storage
+			const hue = localStorage.getItem('hue') || configHue;
+			document.documentElement.style.setProperty('--hue', hue);
+
+			// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
+			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+			offset = offset - offset % 4;
+			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+
+		</script>
+		<style define:vars={{
+			configHue,
+			'page-width': `${PAGE_WIDTH}rem`,
+			'page-bg-image': fullPageBackground ? `url("${banner}")` : 'none',
+		}}></style>
+		<style>
+			/* Remove old background-related CSS variable definitions */
+		</style>
+
+
+		<slot name="head"></slot>
+
+		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
+
+	</head>
+	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
+		  data-overlayscrollbars-initialize
+	>
+		<ConfigCarrier></ConfigCarrier>
+		<slot />
+		<SwupPluginOptimizer />
+
+		<!-- GitHub Card Cache Patch -->
+		<script is:inline src="/github-card-patch.js"></script>
+
+		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
+		<div id="page-height-extend" class="hidden h-[300vh]"></div>
+	</body>
+</html>
+
+<style is:global define:vars={{
+	bannerOffset,
+	'banner-height-home': `${BANNER_HEIGHT_HOME}vh`,
+	'banner-height': `${BANNER_HEIGHT}vh`,
+}}>
+@tailwind components;
+@layer components {
+	/* Full page background container */
+	.has-full-background {
+		background: transparent;
+	}
+	
+	/* Separate background layer */
+	.has-full-background::before {
+		content: '';
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: var(--page-bg-image);
+		background-position: center;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+		transform: scale(var(--bg-scale, 1));
+		transform-origin: center center;
+		filter: brightness(var(--bg-brightness, 100%)) blur(var(--bg-blur, 10px));
+		transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+		z-index: -1;
+		pointer-events: none;
+	}
+	
+	.enable-banner.is-home #banner-wrapper {
+		@apply h-[var(--banner-height-home)] translate-y-[var(--banner-height-extend)]
+	}
+	.enable-banner #banner-wrapper {
+		@apply h-[var(--banner-height-home)]
+	}
+
+	.enable-banner.is-home #banner {
+		@apply h-[var(--banner-height-home)] translate-y-0
+	}
+	.enable-banner #banner {
+		@apply h-[var(--banner-height-home)] translate-y-[var(--bannerOffset)]
+	}
+	.enable-banner.is-home #main-grid {
+		@apply translate-y-[var(--banner-height-extend)];
+	}
+	.enable-banner #top-row {
+		@apply h-[calc(var(--banner-height-home)_-_4.5rem)] transition-all duration-300
+	}
+	.enable-banner.is-home #sidebar-sticky {
+		@apply top-[calc(1rem_-_var(--banner-height-extend))]
+	}
+	.navbar-hidden {
+		@apply opacity-0 -translate-y-16
+	}
+}
+</style>
+
+<script>
+import 'overlayscrollbars/overlayscrollbars.css';
+import {
+	OverlayScrollbars,
+	// ScrollbarsHidingPlugin,
+	// SizeObserverPlugin,
+	// ClickScrollPlugin
+} from 'overlayscrollbars';
+import {getHue, getStoredTheme, setHue, setTheme} from "../utils/setting-utils";
+import {pathsEqual, url} from "../utils/url-utils";
+import {
+	BANNER_HEIGHT,
+	BANNER_HEIGHT_EXTEND} from "../constants/constants";
+import { siteConfig } from '../config';
+
+const bannerEnabled = !!document.getElementById('banner-wrapper')
+
+function setClickOutsideToClose(panel: string, ignores: string[]) {
+	document.addEventListener("click", event => {
+		let panelDom = document.getElementById(panel);
+		let tDom = event.target;
+		if (!(tDom instanceof Node) || !panelDom) return;		// Ensure the event target is an HTML Node and panel exists
+		for (let ig of ignores) {
+			let ie = document.getElementById(ig)
+			if (ie == tDom || (ie?.contains(tDom))) {
+				return;
+			}
+		}
+		panelDom.classList.add("float-panel-closed");
+	});
+}
+setClickOutsideToClose("display-setting", ["display-setting", "display-settings-switch"])
+setClickOutsideToClose("nav-menu-panel", ["nav-menu-panel", "nav-menu-switch"])
+setClickOutsideToClose("search-panel", ["search-panel", "search-bar", "search-switch"])
+
+
+function loadTheme() {
+	const theme = getStoredTheme()
+	setTheme(theme)
+}
+
+function loadHue() {
+	setHue(getHue())
+}
+
+function preCreateKatexContainers() {
+	const katexDisplays = document.querySelectorAll('.katex-display');
+	katexDisplays.forEach(element => {
+		if (!element.closest('.katex-display-container')) {
+			const container = document.createElement('div');
+			container.className = 'katex-display-container';
+			container.setAttribute('aria-label', 'scrollable container for formulas');
+			element.parentNode!.insertBefore(container, element);
+			container.appendChild(element);
+			OverlayScrollbars(container, {
+				scrollbars: {
+					theme: 'scrollbar-base scrollbar-auto',
+					autoHide: 'leave',
+					autoHideDelay: 500,
+					autoHideSuspend: false
+				}
+			});
+			element.setAttribute('data-scrollbar-initialized', 'true');
+		}
+	});
+}
+
+// Simple debouncing to prevent frequent recalculations
+function initCustomScrollbar() {
+	const bodyElement = document.querySelector('body');
+	if (!bodyElement) return;
+	OverlayScrollbars(
+		{
+			target: bodyElement,
+			cancel: {
+				nativeScrollbarsOverlaid: true,
+			}
+		}, {
+			scrollbars: {
+				theme: 'scrollbar-base scrollbar-auto py-1',
+				autoHide: 'move',
+				autoHideDelay: 500,
+				autoHideSuspend: false,
+			},
+		});
+
+	const katexElements = document.querySelectorAll('.katex-display') as NodeListOf<HTMLElement>;
+
+	const katexObserverOptions = {
+		root: null,
+		rootMargin: '100px',
+		threshold: 0.1
+	};
+
+	const processKatexElement = (element: HTMLElement) => {
+		if (!element.parentNode) return;
+		if (element.hasAttribute('data-scrollbar-initialized')) return;
+
+		const container = document.createElement('div');
+		container.className = 'katex-display-container';
+		container.setAttribute('aria-label', 'scrollable container for formulas');
+
+		element.parentNode.insertBefore(container, element);
+		container.appendChild(element);
+
+		OverlayScrollbars(container, {
+			scrollbars: {
+				theme: 'scrollbar-base scrollbar-auto',
+				autoHide: 'leave',
+				autoHideDelay: 500,
+				autoHideSuspend: false
+			}
+		});
+
+		element.setAttribute('data-scrollbar-initialized', 'true');
+	};
+
+	const katexObserver = new IntersectionObserver((entries, observer) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				processKatexElement(entry.target as HTMLElement);
+				observer.unobserve(entry.target);
+			}
+		});
+	}, katexObserverOptions);
+
+	katexElements.forEach(element => {
+		katexObserver.observe(element);
+	});
+}
+
+function showBanner() {
+	if (!siteConfig.banner.enable) return;
+
+	const banner = document.getElementById('banner');
+	if (!banner) {
+		// Banner element not found, this might be expected on pages without banner
+		return;
+	}
+
+	banner.classList.remove('opacity-0', 'scale-105');
+}
+
+// Save background state to localStorage
+function saveBackgroundState(scale: string, brightness: string, blur: string) {
+	localStorage.setItem('bgScale', scale);
+	localStorage.setItem('bgBrightness', brightness);
+	localStorage.setItem('bgBlur', blur);
+}
+
+
+
+function updateBackgroundState(isFullPage: any) {
+	if (isFullPage) {
+		const isSpecialPage = window.location.pathname !== '/' && window.location.pathname !== '/index.html';
+		let scale, brightness, blur;
+
+		if (isSpecialPage) {
+			scale = '1.2';
+			brightness = '60%';
+			blur = '0px';
+		} else {
+			scale = '1';
+			brightness = '100%';
+			blur = '0px';
+		}
+
+		// Set CSS properties
+		document.documentElement.style.setProperty('--bg-scale', scale);
+		document.documentElement.style.setProperty('--bg-brightness', brightness);
+		document.documentElement.style.setProperty('--bg-blur', blur);
+
+		// Persist state to localStorage (new line)
+		saveBackgroundState(scale, brightness, blur);
+	} else {
+		// Clear stored state when fullPageBackground is disabled (new block)
+		localStorage.removeItem('bgScale');
+		localStorage.removeItem('bgBrightness');
+		localStorage.removeItem('bgBlur');
+	}
+}
+
+function init() {
+	loadTheme();
+	loadHue();
+	preCreateKatexContainers();
+	initCustomScrollbar();
+	showBanner();
+	updateBackgroundState((window as any).FULL_PAGE_BACKGROUND);
+}
+
+init();
+
+const setup = () => {
+	window.swup.hooks.on('link:click', () => {
+		document.documentElement.style.setProperty('--content-delay', '0ms')
+	})
+
+	window.swup.hooks.on('animation:out:start', () => {
+		setTimeout(() => {
+			updateBackgroundState((window as any).FULL_PAGE_BACKGROUND);
+		}, 0);
+	})
+
+	window.swup.hooks.on('animation:in:done', () => {
+		// Only update navbar state after animation is completely finished
+		if (!bannerEnabled) return;
+		
+		// Use setTimeout to ensure we're well after the animation frame
+		setTimeout(() => {
+			const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 72 - 16;
+			const scrollTop = Math.max(
+				document.body.scrollTop,
+				document.documentElement.scrollTop
+			);
+			
+			requestAnimationFrame(() => {
+				const navbar = document.getElementById('navbar-wrapper');
+				if (navbar && document.body.classList.contains('lg:is-home') && scrollTop >= threshold) {
+					navbar.classList.add('navbar-hidden');
+				} else if (navbar) {
+					navbar.classList.remove('navbar-hidden');
+				}
+			});
+		}, 600); // 600ms delay to ensure animation completion
+	})
+	// Defer scrollbar initialization until after transition
+	window.swup.hooks.on('content:replace', () => {
+		// Add delay to prevent blocking animation frames
+		setTimeout(() => {
+			initCustomScrollbar();
+		}, 600); // 600ms delay to ensure animation completion
+	})
+	window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
+		// Direct DOM operations without batching
+		const bodyElement = document.querySelector('body');
+		if (pathsEqual(visit.to.url, url('/'))) {
+			bodyElement?.classList.add('lg:is-home');
+		} else {
+			bodyElement?.classList.remove('lg:is-home');
+		}
+
+		// increase the page height during page transition to prevent the scrolling animation from jumping
+		const heightExtend = document.getElementById('page-height-extend')
+		if (heightExtend) {
+			heightExtend.classList.remove('hidden')
+		}
+
+		// Hide the TOC while scrolling back to top
+		let toc = document.getElementById('toc-wrapper');
+		if (toc) {
+			toc.classList.add('toc-not-ready')
+		}
+	});
+	window.swup.hooks.on('page:view', () => {
+		// hide the temp high element when the transition is done
+		const heightExtend = document.getElementById('page-height-extend')
+		if (heightExtend) {
+			heightExtend.classList.remove('hidden')
+		}
+	});
+	// Optimize cleanup operations to avoid conflicts with page transition animations
+		window.swup.hooks.on('visit:end', (_visit: {to: {url: string}}) => {
+			// Use requestAnimationFrame to synchronize with browser's render cycle
+			requestAnimationFrame(() => {
+				const heightExtend = document.getElementById('page-height-extend');
+				const toc = document.getElementById('toc-wrapper');
+				
+				// Batch cleanup operations
+				if (heightExtend) {
+					heightExtend.classList.add('hidden');
+				}
+				if (toc) {
+					toc.classList.remove('toc-not-ready');
+				}
+			});
+		});
+}
+if (window?.swup?.hooks) {
+	setup()
+} else {
+	document.addEventListener('swup:enable', setup)
+}
+
+let resizeTicking = false;
+function onResize() {
+    if (!resizeTicking) {
+        requestAnimationFrame(() => {
+            // calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
+            let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+            offset = offset - offset % 4;
+            document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+            resizeTicking = false;
+        });
+        resizeTicking = true;
+    }
+}
+
+window.addEventListener('resize', onResize, { passive: true });
+
+
+</script>

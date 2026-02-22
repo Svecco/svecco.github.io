@@ -1,0 +1,56 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+	logo?: string;
+	url?: string;
+	label?: string;
+	description?: string;
+	invertOnDark?: boolean;
+	admitted?: boolean; // Add admitted property
+	eager?: boolean; // Add eager loading option
+}
+const {
+	logo,
+	url,
+	label,
+	description,
+	invertOnDark = false,
+	admitted = true,
+	eager = false,
+} = Astro.props;
+---
+
+<a href={url} aria-label={label} class="block">
+    <button
+        class={`w-full h-auto min-h-[2.5rem] rounded-lg bg-none 
+        transition-all py-2 pl-2 text-neutral-1000 dark:text-neutral-100 
+        hover:bg-[var(--btn-regular-bg-hover)] active:scale-95 active:bg-[var(--btn-regular-bg-active)] 
+        ${admitted ? '' : 'opacity-50'}`}
+    >
+        <div class="flex items-center justify-between relative mr-2">
+            <div class="flex items-center min-w-0">
+                {logo && (
+                    <div class="transition w-9 h-9 mr-2 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Image 
+                            src={logo} 
+                            alt="Organization logo" 
+                            class={`w-7 h-7 object-contain ${invertOnDark ? 'dark:invert' : ''} ${admitted ? '' : 'grayscale brightness-60'}`}
+                            loading={eager ? "eager" : "lazy"}
+                            width={28}
+                            height={28}
+                        />
+                    </div>
+                )}
+                <div class="overflow-hidden text-left whitespace-nowrap overflow-ellipsis">
+                    <slot></slot>
+                </div>
+            </div>
+            {description && (
+                <div class="text-right text-gray-500 text-sm whitespace-nowrap overflow-hidden overflow-ellipsis ml-2 flex-shrink-0">
+                    {description}
+                </div>
+            )}
+        </div>
+    </button>
+</a>

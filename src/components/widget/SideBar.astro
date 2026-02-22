@@ -1,0 +1,61 @@
+---
+import { Image } from "astro:assets";
+import type { MarkdownHeading } from "astro";
+import Education from "./Education.astro";
+import Organizations from "./Organizations.astro";
+import Profile from "./Profile.astro";
+import TOC from "./TOC.astro";
+
+interface Props {
+	class?: string;
+	headings?: MarkdownHeading[];
+}
+
+const className = Astro.props.class;
+
+const isSupportedRoute =
+	Astro.url.pathname.startsWith("/posts/") ||
+	Astro.url.pathname.startsWith("/essays/");
+---
+<div id="sidebar" class:list={[className, "w-full relative sidebar-accelerate"]}>
+    <div class="absolute top-1 left-1/2 transform -translate-x-[0%] -translate-y-[92%] z-1">
+        <Image src="/assets/images/blush.webp" alt="pku_yau" class="w-auto h-auto scale-[0.8]" loading="eager" width={1000} height={100} />
+    </div>
+    <div class="flex flex-col w-full gap-4 mb-4">
+        <Profile></Profile>
+    </div>
+    <div class="transition-all duration-700 flex flex-col w-full gap-4 sidebar-accelerate">
+        <Education class="onload-animation" style="animation-delay: 150ms"></Education>
+        <Organizations class="onload-animation" style="animation-delay: 200ms"></Organizations>
+    </div>
+    
+	<div class="transition-all duration-700 flex flex-col w-full gap-4 sticky top-4 pt-4 toc-accelerate">
+		<widget-layout data-id="toc" data-is-collapsed="false" class="pb-4 card-base onload-animation" style="animation-delay: 250ms">
+			<div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-8 mt-4 mb-2
+            before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+            before:absolute before:left-[-16px] before:top-[5.5px]">Navigation</div>
+			<div
+					id="toc"
+					class="collapse-wrapper px-4 pr-2"
+					class:list={["collapse-wrapper px-4 pr-2", 
+						isSupportedRoute && Astro.props.headings && Astro.props.headings.length > 0 && Astro.props.headings.some(heading => heading.text && heading.text.trim())
+							? 'overflow-y-auto'
+							: ''
+					]}
+					style={
+                        isSupportedRoute && Astro.props.headings && Astro.props.headings.length > 0 && Astro.props.headings.some(heading => heading.text && heading.text.trim())
+                            ? 'height: 30rem;'
+                            : 'height: 3.5rem;'
+                    }
+			>
+                {isSupportedRoute && Astro.props.headings && Astro.props.headings.length > 0 && Astro.props.headings.some(heading => heading.text && heading.text.trim()) ? (
+						<TOC headings={Astro.props.headings || []} />
+                ) : (
+						<div class="py-4 text-center text-neutral-500 dark:text-neutral-400 text-sm italic">
+							Try any archives to navigate.
+						</div>
+                )}
+			</div>
+		</widget-layout>
+	</div>
+</div>

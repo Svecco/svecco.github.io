@@ -1,0 +1,23 @@
+.pswp__button {
+    @apply transition bg-black/40 hover:bg-black/50 active:bg-black/60 flex items-center justify-center mr-0 w-12 h-12 !important;
+    /* Flatten button structure - direct styling instead of wrapper divs */
+    border-radius: 0.75rem;
+    /* Direct border-radius instead of separate classes */
+    transform: translateZ(0);
+    /* Hardware acceleration */
+    backface-visibility: hidden;
+}
+.pswp__button--zoom {
+    @apply mt-4 mr-2.5 !important;
+}
+.pswp__button--close {
+    @apply mt-4 mr-4 !important;
+}
+/* Active state optimization */
+.pswp__button:active {
+    @apply scale-90 active:scale-90 !important;
+    /* Combine scale effects for better performance */
+    transform: translateZ(0) scale(0.9);
+    will-change: transform;
+    backface-visibility: hidden;
+}

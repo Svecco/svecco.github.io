@@ -1,0 +1,38 @@
+/* Essential will-change optimizations - KEEP ALL */
+.btn-card, .btn-plain, .custom-md a:not(.no-styling), .copy-btn, .expand-animation, 
+.btn-regular, .btn-regular-dark, .card-base, .float-panel, .link, .link-lg {
+  will-change: auto !important;
+}
+
+.animated-element {
+  will-change: transform, opacity !important;
+}
+
+.copy-btn:hover {
+  will-change: opacity, transform !important;
+}
+
+.animation-complete {
+  will-change: auto !important;
+}
+
+.navbar-hidden, #navbar-wrapper.navbar-hidden {
+  will-change: transform !important;
+}
+
+.back-to-top-btn:not(.hide) {
+  will-change: opacity, transform !important;
+}
+
+#toc-wrapper:not(.toc-hide):not(.toc-not-ready) {
+  will-change: transform, opacity !important;
+}
+
+/* Mobile and reduced motion optimizations */
+@media (max-width: 768px) or (prefers-reduced-motion: reduce) {
+  .btn-card, .btn-plain, .custom-md a:not(.no-styling), .copy-btn, 
+  .btn-regular, .btn-regular-dark {
+    will-change: auto !important;
+    transform: none !important;
+  }
+}

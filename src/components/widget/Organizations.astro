@@ -1,0 +1,43 @@
+---
+import { organizationsConfig } from "@/config";
+import ButtonWithLogo from "../control/ButtonWithLogo.astro";
+import WidgetLayout from "./WidgetLayout.astro";
+
+const { organizations } = organizationsConfig;
+
+const COLLAPSED_HEIGHT = "7.5rem";
+// Always show all organizations, never collapse
+const isCollapsed = false;
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+---
+
+<WidgetLayout name="Matrices" id="organizations" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
+                class={className} style={style}
+>
+    {organizations.map((org) =>
+        <ButtonWithLogo
+            url={org.url}
+            logo={org.logo}
+            label={`Visit ${org.name}`}
+            admitted={org.admitted !== undefined ? org.admitted : true}
+            eager={false}
+        >
+            <div class="flex flex-col w-full">
+                <div class="text-neutral-700 dark:text-neutral-300 truncate">{org.name}</div>
+                <div class="flex mt-1 w-full">
+                    <div class="flex-1 min-w-0">
+                        {org.description && (
+                            <div class="text-gray-500 text-sm truncate">{org.description}</div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </ButtonWithLogo>
+    )}
+</WidgetLayout>
