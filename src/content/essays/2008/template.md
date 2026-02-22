@@ -114,10 +114,17 @@ println!("Hello, world!");
 ```
 
 ## 3.6 Tables
-| Column 1 | Column 2 | Column 3 |
-|----------|----------|----------|
-| Cell 1   | Cell 2   | Cell 3   |
-| Cell 4   | Cell 5   | Cell 6   |
+| Alignment           | Mathmaticians' Proof                                                                                                                         |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| **Lawful Good**     | *Therefore, we have presented the proof with the utmost attention to detail.*                                                                |
+| **Neutral Good**    | *Proof. The proof of this theorem can be found in [4, 18].*                                                                                  |
+| **Chaotic Good**    | *We now prove Theorem 2.1.<br>Theorem (2.1): A base case is always required to terminate recursion.<br>Proof. See the proof of Theorem 2.1.* |
+| **Lawful Neutral**  | *¹ We omit the straightforward yet tedious details of the proof.*                                                                            |
+| **True Neutral**    | *We outline the proof of this result.*                                                                                                       |
+| **Chaotic Neutral** | *Proof. This has been verified using C++.*                                                                                                   |
+| **Lawful Evil**     | *The reader is encouraged to verify this as an exercise.*                                                                                    |
+| **Neutral Evil**    | *PROOF. Trivial.*                                                                                                                            |
+| **Chaotic Evil**    | *¹ This was revealed to me in a dream.*                                                                                                      |
 
 ## 3.7 Horizontal Rule
 ---
