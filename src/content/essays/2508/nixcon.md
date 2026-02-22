@@ -256,6 +256,8 @@ relatively quickly, though the situation has improved somewhat recently.
 
 ![dingtalk.webp](offwego/dingtalk.webp)
 
+::github{repo="NixOS/nixpkgs"}
+
 In addition, many issues **are not caused by** packagers, and such 
 problems are particularly prominent with close source software. 
 The `dingtalk` package shown above is a pull request I previously 
@@ -379,7 +381,7 @@ I think I need to step something up next time, :spoiler[if able to have], _*sigh
 ---
 
 # Chores
-## People Mentioned Specially A-Z
+## People Mentioned Specially (A-Z)
 
 :::hyperlink{href="https://aleksana.moe/" title="Aleksana" avatar="/assets/links/Aleksanaa_42209822.webp" description="@aleksanaa. Really bad, don't watch."}
 :::
@@ -393,6 +395,6 @@ I think I need to step something up next time, :spoiler[if able to have], _*sigh
 :::hyperlink{href="https://prince213.top/" title="Sizhe Zhao" avatar="/assets/links/Prince213_25235514.webp" description="@prince213. ShanghaiTech University, the vice president of the GeekPie Association."}
 :::
 
-## Shy, and Speechless.
+## Speechless.
 ![glasses.webp](offwego/glasses.webp)
 Actually, I've become even more socially anxious 😭
