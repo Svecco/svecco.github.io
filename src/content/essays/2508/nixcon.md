@@ -8,14 +8,7 @@ draft: false
 
 :::important[Summary]
 The article documents my personal experience of participating in a community conference.
-:::
-
-:::note[When Editing]
-The content was **LLM corrected**, for **structures** and **syntax**, which
-fixed plenty errors of my English. Btw, I'm planning there may
-have a [IELTS](https://ielts.org) examination in the future for myself.
-This content is my old article, I originally planned to just copy it over,
-but ended up **rewriting** almost the **entire** essay, edited on **Feb 12, 2026**.
+Therefore, I _do not intend to include too much technical content_. Just keep the _tone light_.
 :::
 
 :::tip[Preface]
@@ -26,6 +19,14 @@ dedicated to `Nix`. As I didn't take many
 photos at the time, the images used in this article may have been taken by 
 other attendees. I will provide a list of photographers in the footnotes.
 **e.g.** the first photo below was taken by [@nihui](https://t.me/nihui_szyl).
+:::
+
+:::note[When Editing]
+The content was **LLM corrected**, for **structures** and **syntax**, which
+fixed plenty errors of my English. Btw, I'm planning there may
+have a [IELTS](https://ielts.org) examination in the future for myself.
+This content is my old article, I originally planned to just copy it over,
+but ended up **rewriting** almost the **entire** essay, edited on **Feb 12, 2026**.
 :::
 
 ---
@@ -59,6 +60,10 @@ although hesitated for a long time, I think, _just go for it_.
 After all, I’m still a student, it’s okay to embarrass myself a little. 
 **I might as well use up all the awkward moments I’d have in the future 
 ahead of time**, and, :spoiler[**it’s even(?) a gain**].
+
+Eventually I decided. _This was once revealed to me in a dream **:)**_
+
+![dream.jpg](patch/dream.webp)
 
 I told my parents about it, and to my surprise, they agreed **right away**!
 and were unusually excited. Maybe it’s because I’m not like other high 
@@ -125,7 +130,7 @@ there was a [_**Loongson**_](https://www.loongson.cn/product/show?id=26)[^3]
 **playing Minecraft**, which I hadn't expected at all. And, amidst **this 
 linux con**, **I brought a Windows laptop**. Uh... maybe if I just keep 
 `Tailscale` SSHing into my workstation, nobody will notice. _Em mm, 
-I hope._ :spoiler[Fine, I got caught later.]
+I hope._ :spoiler["Wow, an undercover agent."]
 
 [^3]: [_**Loongson**_](https://en.wikipedia.org/wiki/Loongson) is a leading _Chinese 
 brand_ of homegrown general purpose CPUs. It has built the independent `LoongArch`
@@ -142,10 +147,27 @@ it, didn't work. I'm not sure if it's a hardware problem because... actually
 the instability only happens on `NixOS` :spoiler[LMAO]. Really reproducible, bro.
 :::
 
+## Take the Subway
+
+<div style="text-align: center;"><i>Yes, I use a <b>COMPASS</b> to figure out which subway I should take.</i></div>
+<div style="text-align: center;"><i>...</i></div>
+<div style="text-align: center;"><i>Just about passable for now. Uh, perfect to use as embarrassing dirt.</i></div>
+
 ---
 
 # Ownership Moved to Main
 It's **Rust** Calling! ~~Oops, wrong script.~~
+
+:::tip[What's Nix?]
+A functional package management ecosystem for perfectly reproducible, rollback-ready environments. Its core components:
+
+| Component | Description                                                                    |
+|-----------|--------------------------------------------------------------------------------|
+| `Nix`     | _The underlying functional language & package manager_                         |
+| `Nixpkgs` | _As the name, also the world's largest monolithic software package repository_ |
+| `NixOS`   | _A Linux distribution built entirely around Nix, more originally reproducible_ |
+:::
+
 ## Routines and Arrangements
 ### Day 1
 1.  **09:30** On-site check-in and registration
@@ -186,7 +208,26 @@ current **personal** thoughts on [Nix](https://nixos.org/),
 As for the various knowledge and information provided during the agenda, 
 you can find it all [here](https://nixos.party/).
 
-Nix is a great fit for scientific research work[^4] and people 
+If it was said that _**Gentoo Linux**_ has grown up alongside me, then, 
+<div style="text-align: center;"><i><b>K.I.S.S.</b> we will also crash and burn together, too. </i></div>
+
+_In the final moments, it will be just like this:_
+
+$$
+\mathit{\mathbf{\exists DepsChains_{mess}\triangleright Chaos\S Rm*}}
+$$
+
+_**Each** standalone `Nix` declaration file_ corresponds to _**one** system environment_.
+This also gives it unique vitality when users have multiple devices or complex working scenarios.
+With `Nix`, the situation above can be effectively prevented. 
+System crashed? Just select a hash entry and roll back.
+Got a new computer? Just run:
+
+```shell title="Build && RollBack"
+doas nixos-rebuild switch --flake /path/to/your/flake#your-hostname
+```
+
+`Nix` is a great fit for scientific research work[^4] and people 
 who love tinkering, esp. those into ricing who are still Linux hopping 
 (_no offense intended_). Rollbacks are incredibly convenient, and its strong
 declarative design makes **syncing environments across multiple machines** 
@@ -220,6 +261,11 @@ Of course, there are also some special cases, like
 the **author** of 
 [**_The Nix & Flakes Book_**](https://nixos-and-flakes.thiscute.world/).
 
+By the way, I also highly recommend **Ryan Yin**'s 
+[**_The Nix & Flakes Book_**](https://nixos-and-flakes.thiscute.world/)
+It is the perfect choice for getting started with `Nix`,
+which is an unofficial, beginner-friendly.
+
 ![ryan.webp](offwego/ryan.webp)
 
 :::important[Translation in `YAML`]
@@ -244,10 +290,10 @@ messages:
 :::
 
 ![ryan_lt.webp](patch/ryan_lt.webp)
-_(above is **Ryan Yin**'s laptop)_
+_(above is **Ryan Yin**'s laptop, photo taken by **Ryan Yin**)_
 
 From community side,
-contributors to the Nix community come from all over the world.
+contributors to the `Nix` community come from all over the world.
 Due to inconsistent review quality, some packages with strong
 **regional** characteristics may not be well understood by others.
 As a result, some **poorly** packaged versions can be merged into
@@ -366,17 +412,17 @@ and unsurprisingly, :spoiler[_**glasses broken then, from the middle btw**_].
 
 ---
 
-# Time to Go Home
+# Time to Go Back
 
-I managed to take a few photos before leaving, the opportunity was hard to come by.
+I took a few photos before I left. Opportunities like this don’t come easy for me.
 ![shanghai.webp](offwego/shanghai.webp)
 
-It's only been two days, but it feels like torture. 
-Even though I came here at first to push myself and 
-get some experience, there was barely any interaction
-at all. It really broadened my horizons, though.
+Two days only. It felt like torture the whole time. I came here to push myself,
+to get over this fear, to talk to people. I failed. Barely a word out of my 
+mouth the entire time. But even so. It really did broaden my horizons.
 
-I think I need to step something up next time, :spoiler[if able to have], _*sigh_.
+I know I need to step up. Next time.
+:spoiler[If there even is a next time] *sigh.
 
 ---
 
