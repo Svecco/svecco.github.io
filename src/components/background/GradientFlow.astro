@@ -26,14 +26,14 @@ const {
 	}
 	
 	@keyframes gradientFlow {
-		0% { background-position: 0% 50%; }
+		0% { background-position: 0 50%; }
 		50% { background-position: 100% 50%; }
-		100% { background-position: 0% 50%; }
+		100% { background-position: 0 50%; }
 	}
 	
-	#gradient-flow > div {
-		backdrop-filter: blur(2px);
-	}
+	//#gradient-flow > div {
+	//	backdrop-filter: blur(2px);
+	//}
 </style>
 
 <script>
@@ -45,24 +45,20 @@ const {
 	function updateGradient() {
 		time += 0.01 * speed;
 		
-		// 根据滚动位置调整强度
 		const scrollY = window.scrollY;
 		const maxScroll = document.body.scrollHeight - window.innerHeight;
 		const scrollProgress = Math.min(scrollY / maxScroll, 1);
 		const currentIntensity = intensity * (0.5 + 0.5 * scrollProgress);
 		
-		// 动态调整颜色和透明度
-		const hueShift = Math.sin(time) * 30;
-		const saturation = 70 + Math.sin(time * 0.7) * 20;
-		const lightness = 50 + Math.cos(time * 0.5) * 10;
-		
+		Math.sin(time) * 30;
+		70 + Math.sin(time * 0.7) * 20;
+		50 + Math.cos(time * 0.5) * 10;
 		overlay.style.opacity = currentIntensity;
 		overlay.style.backdropFilter = `blur(${1 + scrollProgress * 3}px)`;
 		
 		requestAnimationFrame(updateGradient);
 	}
 	
-	// 根据方向调整动画
 	const directionMap = {
 		horizontal: '90deg',
 		vertical: '0deg', 
@@ -71,10 +67,8 @@ const {
 	
 	gradientElement.style.setProperty('--direction', directionMap[direction] || '45deg');
 	
-	// 启动动画循环
 	updateGradient();
 	
-	// 响应窗口大小变化
 	window.addEventListener('resize', () => {
 		gradientElement.style.animationDuration = `${15 / speed}s`;
 	});

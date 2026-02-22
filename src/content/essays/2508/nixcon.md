@@ -1,10 +1,14 @@
 ---
-title: Nix Conference Shanghai
+title: NixCN Conference Shanghai
 published: 2025-08-16
 category: Essays
 location: Shanghai, China
 draft: false
 ---
+
+:::important[Summary]
+The article documents my personal experience of participating in a community conference.
+:::
 
 :::note[When Editing]
 The content was **LLM corrected**, for **structures** and **syntax**, which
@@ -252,6 +256,8 @@ relatively quickly, though the situation has improved somewhat recently.
 
 ![dingtalk.webp](offwego/dingtalk.webp)
 
+::github{repo="NixOS/nixpkgs"}
+
 In addition, many issues **are not caused by** packagers, and such 
 problems are particularly prominent with close source software. 
 The `dingtalk` package shown above is a pull request I previously 
@@ -375,6 +381,20 @@ I think I need to step something up next time, :spoiler[if able to have], _*sigh
 ---
 
 # Chores
-## Shy, and Speechless.
+## People Mentioned Specially (A-Z)
+
+:::hyperlink{href="https://aleksana.moe/" title="Aleksana" avatar="/assets/links/Aleksanaa_42209822.webp" description="@aleksanaa. Really bad, don't watch."}
+:::
+
+:::hyperlink{href="https://blog.chn.moe/" title="Haonan Chen" avatar="/assets/links/CHN_35858462.webp" description="@chn and many. A man not as cute as his avatar."}
+:::
+
+:::hyperlink{href="https://thiscute.world/en/" title="Ryan Yin" avatar="/assets/links/Ryan4yin_22363274.webp" description="@ryan4yin. Long and hard the road, but walkers shall arrive."}
+:::
+
+:::hyperlink{href="https://prince213.top/" title="Sizhe Zhao" avatar="/assets/links/Prince213_25235514.webp" description="@prince213. ShanghaiTech University, the vice president of the GeekPie Association."}
+:::
+
+## Speechless.
 ![glasses.webp](offwego/glasses.webp)
 Actually, I've become even more socially anxious 😭

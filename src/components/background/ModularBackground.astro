@@ -23,35 +23,6 @@ const {
 
 <link rel="preload" href={backgroundImage} as="image" fetchpriority="high" />
 
-<style is:global>
-.modular-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  z-index: -1;
-  pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Linear transition effect (homepage) */
-.modular-background[data-effect-type="linear"] {
-  transform: scale(var(--bg-scale, 1));
-  filter: brightness(var(--bg-brightness, 100%)) blur(var(--bg-blur, 0px));
-}
-
-/* Fixed state effect (special pages) */
-.modular-background[data-effect-type="fixed"] {
-  transform: scale(1.2);
-  filter: brightness(90%) blur(3px);
-}
-</style>
-
 <script is:inline>
 class ModularBackground {
   constructor(container) {

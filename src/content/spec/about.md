@@ -33,7 +33,7 @@ $$
 **Special gratitude** to [@Junchaw](https://github.com/junchaw) for his concise but pivotal guidance in the
 past few years.
 
-:::hyperlink{href="https://stackoverflow.com/users/3675719" title="Junchaw" avatar="/assets/links/Junchaw_34226239.webp" description="SRE, Full Stack Developer"}
+:::hyperlink{href="https://stackoverflow.com/users/3675719" title="Junchaw" avatar="/assets/links/Junchaw_34226239.webp" description="@junchaw. SRE, Full Stack Developer."}
 :::
 
 [^1]: Currently `@Svecco` from **2025**. Past `@Angechory` in **2017-2025**, `@Nyxvectar` in **2024-2025**.
