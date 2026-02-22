@@ -243,23 +243,6 @@ a.card-hyperlink
   text-decoration: none
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1)
 
-  &:after
-    content: ''
-    position: absolute
-    right: 1.5rem
-    top: 50%
-    transform: translateY(-50%)
-    width: 4rem
-    height: 4rem
-    background-image: url("/assets/entities/tesla.svg")
-    background-size: contain
-    background-repeat: no-repeat
-    background-position: center
-    opacity: 0.7
-    transition: opacity 0.15s ease
-    html:not(.dark) &
-      filter: invert(1) brightness(0)
-
   &:hover
     background-color: var(--btn-regular-bg-hover)
 
@@ -285,7 +268,6 @@ a.card-hyperlink
     flex-wrap: wrap
     gap: 0.75rem
     margin-bottom: 0.5rem
-    margin-right: 2.5rem
     transition: color 0.15s ease
     .hc-avatar
       width: 2.5rem
@@ -311,7 +293,6 @@ a.card-hyperlink
     white-space: normal
     word-wrap: break-word
     overflow-wrap: break-word
-    margin-right: 2.5rem
     transition: color 0.15s ease
 
 a.card-hyperlink.fetch-waiting

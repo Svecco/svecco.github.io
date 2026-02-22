@@ -19,7 +19,7 @@ export const siteConfig: SiteConfig = {
 	},
 	banner: {
 		enable: true,
-		src: "/assets/images/banner.webp",
+		src: "/assets/images/peak.webp",
 		position: "center",
 		fullPage: true,
 		credit: {
@@ -61,19 +61,19 @@ export const profileConfig: ProfileConfig = {
 			url: "mailto:chenrui@sve.moe",
 		},
 		{
-			name: "WhatsApp",
-			icon: "fa6-brands:whatsapp",
-			url: "chenrui@sve.moe",
-		},
-		{
 			name: "Discord",
 			icon: "fa6-brands:discord",
 			url: "https://discordapp.com/users/svecco",
 		},
 		{
-			name: "Bilibili",
-			icon: "fa6-brands:bilibili",
-			url: "https://space.bilibili.com/246563710",
+			name: "GitHub",
+			icon: "fa6-brands:github",
+			url: "https://github.com/Svecco/",
+		},
+		{
+			name: "Zhihu",
+			icon: "fa6-brands:zhihu",
+			url: "https://www.zhihu.com/people/angechory",
 		},
 	],
 };
@@ -81,19 +81,19 @@ export const profileConfig: ProfileConfig = {
 export const organizationsConfig: OrganizationsConfig = {
 	organizations: [
 		{
-			name: "THE ASF",
-			url: "https://apache.org",
-			logo: "/assets/images/apache.svg",
-			description: "Rustacean, Contributor",
-			admitted: true,
-		},
-		{
 			name: "Google Dev Group",
 			url: "https://gdg.community.dev",
 			logo: "/assets/images/google_dev.svg",
 			description: "GDG Hangzhou Member",
 			admitted: true,
 		},
+		// {
+		// 	name: "THE ASF",
+		// 	url: "https://apache.org",
+		// 	logo: "/assets/images/apache.svg",
+		// 	description: "Rustacean",
+		// 	admitted: false,
+		// },
 	],
 };
 

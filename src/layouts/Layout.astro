@@ -203,7 +203,7 @@ const bannerOffset =
 		background-attachment: fixed;
 		transform: scale(var(--bg-scale, 1));
 		transform-origin: center center;
-		filter: brightness(var(--bg-brightness, 100%)) blur(var(--bg-blur, 0px));
+		filter: brightness(var(--bg-brightness, 100%)) blur(var(--bg-blur, 10px));
 		transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 		z-index: -1;
 		pointer-events: none;
@@ -395,9 +395,9 @@ function updateBackgroundState(isFullPage: any) {
 		let scale, brightness, blur;
 
 		if (isSpecialPage) {
-			scale = '1.15';
-			brightness = '65%';
-			blur = '2px';
+			scale = '1.2';
+			brightness = '60%';
+			blur = '0px';
 		} else {
 			scale = '1';
 			brightness = '100%';
