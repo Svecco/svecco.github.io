@@ -7,7 +7,7 @@ draft: false
 ---
 
 :::important[Summary]
-This text is a _"legal statement"_ I wrote for some absurd toys before. Boring.
+XD. This text is a _"legal statement"_ I wrote for some absurd toys before. Boring.
 :::
 
 # User Agreement and Disclaimer
