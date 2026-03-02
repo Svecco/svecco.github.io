@@ -3,7 +3,6 @@ import ArchivePanel from "../components/ArchivePanel.svelte";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedEssaysList } from "../utils/content-utils";
 
-// 获取所有 essays 列表
 const sortedPostsList = await getSortedEssaysList();
 console.log("Archive essays load - found:", sortedPostsList.length);
 ---

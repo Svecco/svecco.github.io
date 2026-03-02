@@ -1,6 +1,6 @@
 # About
 
-Real name **Chenrui Wu**. Feel free to call me **Svecco**[^names] or the nickname Yue Wu. 
+Real name **Chenrui Wu**. Feel free to call me **Svecco**[^names] or the real name.
 
 I’m a _Mathematics_ & _ICT_ enthusiast, _Rust_ fanatic, and _fox_ lover.
 Just an ordinary student from _China_, with a dream of studying at

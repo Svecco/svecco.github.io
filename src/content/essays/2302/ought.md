@@ -3,7 +3,7 @@ title: The Person You Ought to Be
 published: 2023-02-02
 category: Essays
 location: Hangzhou, China
-draft: true
+draft: false
 ---
 
 :::tip[Preface]
