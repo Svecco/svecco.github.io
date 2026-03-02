@@ -4,7 +4,7 @@
  */
 
 (() => {
-	const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 hours
+	const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7days
 
 	function getCacheKey(repo) {
 		return `github_repo_${repo.replace(/\//g, "_")}`;

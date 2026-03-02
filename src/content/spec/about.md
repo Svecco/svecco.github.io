@@ -1,6 +1,6 @@
 # About
 
-Real name **Chenrui Wu**. Feel free to call me **Svecco**[^names] or the nickname Yue Wu. 
+Real name **Chenrui Wu**. Feel free to call me **Svecco** or the real name.
 
 I’m a _Mathematics_ & _ICT_ enthusiast, _Rust_ fanatic, and _fox_ lover.
 Just an ordinary student from _China_, with a dream of studying at
@@ -10,7 +10,7 @@ This site, [sve.moe](https://sve.moe), is a complete rewrite of my old, simplist
 I’ve decided to leave *most of* my past behind: my outdated GitHub account 
 [Pevkaioe](https://api.github.com/users/Nyxvectar),
 old codes, early writings, and long-used online aliases. 
-This site, I plan to only share my personal insights now.
+I plan to only share my personal insights here now.
 
 I’ve wasted too much time on superficial things.
 For example, even though I first learned about Linux in 2020,
@@ -42,5 +42,3 @@ past few years.
 
 :::hyperlink{href="https://stackoverflow.com/users/3675719" title="Junchaw" avatar="/assets/links/Junchaw_34226239.webp" description="@junchaw. SRE, Full Stack Developer."}
 :::
-
-[^names]: Currently `@Svecco` from **2025**. Past `@Angechory` in **2017-2025**, `@Nyxvectar` in **2024-2025**.

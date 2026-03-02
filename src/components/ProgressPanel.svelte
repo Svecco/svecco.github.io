@@ -25,8 +25,7 @@ interface Group {
 
 // Cache key for localStorage
 const CACHE_KEY = `github_progress_${githubUsername}`;
-// Cache expiration time in milliseconds (Half a Day)
-const CACHE_EXPIRATION = 12 * 60 * 60 * 1000;
+const CACHE_EXPIRATION = 16 * 60 * 60 * 1000;
 
 let groups: Group[] = [
 	{ name: "PRs", items: [], loading: true },
@@ -254,8 +253,8 @@ onDestroy(() => {
 
 								<!-- repo name -->
 								<div
-									class="hidden md:block md:w-[15%] text-left text-sm transition
-										whitespace-nowrap overflow-ellipsis overflow-hidden text-30"
+									class="hidden md:block ml-4 text-right text-sm transition
+										whitespace-nowrap flex-shrink-0 text-30"
 								>
 									{getRepoNameFromUrl(item.repository_url)}
 								</div>
