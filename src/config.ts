@@ -10,7 +10,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "Svecco",
+	title: "淮揚潔秋",
 	subtitle: "Fox's Den",
 	lang: "en",
 	themeColor: {
