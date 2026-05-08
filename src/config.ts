@@ -10,8 +10,8 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "Fox's Den",
-	subtitle: "OvO",
+	title: "淮揚潔秋",
+	subtitle: "Fox's Den",
 	lang: "en",
 	themeColor: {
 		hue: 85,
@@ -34,7 +34,7 @@ export const siteConfig: SiteConfig = {
 	},
 	favicon: [],
 	// GitHub username for progress page
-	githubUsername: "svecco",
+	githubUsername: "Jysve",
 };
 
 export const navBarConfig: NavBarConfig = {
@@ -52,8 +52,8 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "/assets/images/avatar.webp",
-	name: "Svecco",
-	bio: "Keep your composure, remain consistent.",
+	name: "Hiyon Jysve",
+	bio: "Not much maintained here.",
 	links: [
 		{
 			name: "Email",
@@ -63,12 +63,12 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Discord",
 			icon: "fa6-brands:discord",
-			url: "https://discordapp.com/users/svecco",
+			url: "https://discordapp.com/users/jysve",
 		},
 		{
 			name: "GitHub",
 			icon: "fa6-brands:github",
-			url: "https://github.com/Svecco/",
+			url: "https://github.com/Jysve/",
 		},
 		{
 			name: "Zhihu",

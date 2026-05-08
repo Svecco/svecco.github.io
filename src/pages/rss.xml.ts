@@ -24,8 +24,7 @@ export async function GET(context: APIContext): Promise<Response> {
 		description: siteConfig.subtitle || "No description",
 		site: context.site ?? "https://sve.moe",
 		items: blog.map((post) => {
-			const content =
-				typeof post.body === "string" ? post.body : String(post.body || "");
+			const content = post.body;
 			const cleanedContent = stripInvalidXmlChars(content);
 			return {
 				title: post.data.title,
