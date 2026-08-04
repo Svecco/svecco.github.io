@@ -10,7 +10,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "淮揚潔秋",
+	title: "Jysveeeeeeeee!",
 	subtitle: "Fox's Den",
 	lang: "en",
 	themeColor: {
@@ -52,7 +52,7 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "/assets/images/avatar.webp",
-	name: "Hiyon Jysve",
+	name: "Jysve",
 	bio: "Not much maintained here.",
 	links: [
 		{

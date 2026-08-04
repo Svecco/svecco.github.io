@@ -1,6 +1,6 @@
 # About
 
-Real name **Chenrui Wu**. Feel free to call me **Hiyon Jysve** or the Chinese name **淮揚潔秋**.
+Real name **Chenrui Wu**. Feel free to call me **Jysve**.
 
 I’m a _Mathematics_ & _ICT_ enthusiast, _Rust_ fanatic, and _fox_ lover.
 Just an ordinary student from _China_, with a dream of studying at
