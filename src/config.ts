@@ -73,7 +73,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Zhihu",
 			icon: "fa6-brands:zhihu",
-			url: "https://www.zhihu.com/people/angechory",
+			url: "https://www.zhihu.com/people/Jysve",
 		},
 	],
 };
